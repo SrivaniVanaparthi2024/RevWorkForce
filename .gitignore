@@ -1,0 +1,13 @@
+# Java
+*.class
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Compiled output
+bin/
+
+# Logs
+*.log
