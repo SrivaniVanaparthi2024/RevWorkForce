@@ -2,6 +2,8 @@ package com.revworkforce.main;
 
 import com.revworkforce.auth.AuthService;
 import com.revworkforce.auth.Session;
+import com.revworkforce.exception.DatabaseException;
+import com.revworkforce.exception.InvalidInputException;
 import com.revworkforce.menu.MainMenu;
 import com.revworkforce.util.DBUtil;
 
@@ -10,7 +12,7 @@ import java.util.Scanner;
 
 public class RevWorkForceApp {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidInputException, DatabaseException {
 
         Connection conn = DBUtil.getConnection();
         if (conn == null) {

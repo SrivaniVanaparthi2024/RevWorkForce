@@ -2,8 +2,16 @@ package com.revworkforce.menu;
 
 import com.revworkforce.auth.Session;
 import com.revworkforce.model.Employee;
+import com.revworkforce.model.LeaveBalance;
 import com.revworkforce.model.LeaveRequest;
+import com.revworkforce.model.PerformanceReview;
+import com.revworkforce.model.Notification;
+import com.revworkforce.service.AttendanceService;
+import com.revworkforce.service.LeaveBalanceService;
 import com.revworkforce.service.LeaveService;
+import com.revworkforce.service.PayrollService;
+import com.revworkforce.service.PerformanceReviewService;
+import com.revworkforce.service.NotificationService;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.InvalidInputException;
 
@@ -14,45 +22,47 @@ import java.util.Scanner;
 
 public class EmployeeMenu {
 
-    private Scanner sc = new Scanner(System.in);
-    private LeaveService leaveService = new LeaveService();
+	private LeaveService leaveService = new LeaveService();
+    private PerformanceReviewService reviewService = new PerformanceReviewService();
+    private NotificationService notificationService = new NotificationService();
+    private LeaveBalanceService leaveBalanceService = new LeaveBalanceService();
+    private AttendanceService attendanceService = new AttendanceService();
+    private PayrollService payrollService = new PayrollService();
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private java.util.Scanner sc = new java.util.Scanner(System.in);
 
     public void showMenu() {
-
         Employee user = Session.getCurrentUser();
         if (user == null) {
-            System.out.println(" No active session!");
+            System.out.println("❌ No active session!");
             return;
         }
 
         boolean exit = false;
-
         while (!exit) {
             System.out.println("\n👤 EMPLOYEE MENU");
             System.out.println("1. Apply Leave");
             System.out.println("2. View My Leaves");
-            System.out.println("3. View Profile");
-            System.out.println("4. Logout");
+            System.out.println("3. View Leave Balance");
+            System.out.println("4. View Profile");
+            System.out.println("5. View Performance Review");
+            System.out.println("6. View Notifications");
+            System.out.println("7. View My Attendance");
+            System.out.println("8. View My Payroll");
+            System.out.println("9. Logout");
             System.out.print("Enter choice: ");
-
             String choice = sc.nextLine();
 
-            if ("1".equals(choice)) {
-                applyLeave(user);
-            }
-            else if ("2".equals(choice)) {
-                viewMyLeaves(user);
-            }
-            else if ("3".equals(choice)) {
-                viewProfile(user);
-            }
-            else if ("4".equals(choice)) {
-                Session.logout();
-                exit = true;
-            }
-            else {
-                System.out.println("❌ Invalid choice!");
-            }
+            if ("1".equals(choice)) applyLeave(user);
+            else if ("2".equals(choice)) viewMyLeaves(user);
+            else if ("3".equals(choice)) viewLeaveBalance(user);
+            else if ("4".equals(choice)) viewProfile(user);
+            else if ("5".equals(choice)) viewPerformanceReviews(user);
+            else if ("6".equals(choice)) viewNotifications(user);
+            else if ("7".equals(choice)) attendanceService.viewAttendanceForEmployee(user.getEmpId());
+            else if ("8".equals(choice)) payrollService.viewPayrollForEmployee(user.getEmpId());
+            else if ("9".equals(choice)) { Session.logout(); exit=true; }
+            else System.out.println("❌ Invalid choice!");
         }
     }
 
@@ -65,13 +75,13 @@ public class EmployeeMenu {
             System.out.print("Leave Type ID: ");
             lr.setLeaveTypeId(Integer.parseInt(sc.nextLine()));
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             System.out.print("From Date (yyyy-MM-dd): ");
-            Date fromDate = sdf.parse(sc.nextLine());
+            Date fromDate = simpleDateFormat.parse(sc.nextLine());
 
             System.out.print("To Date (yyyy-MM-dd): ");
-            Date toDate = sdf.parse(sc.nextLine());
+            Date toDate = simpleDateFormat.parse(sc.nextLine());
 
             System.out.print("Reason: ");
             String reason = sc.nextLine();
@@ -88,7 +98,7 @@ public class EmployeeMenu {
         } catch (DatabaseException e) {
             System.out.println("❌ DB Error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("❌ Invalid date format. Use yyyy-MM-dd");
+            System.out.println("❌ Invalid input / date format");
         }
     }
 
@@ -103,25 +113,49 @@ public class EmployeeMenu {
                 return;
             }
 
-            System.out.println(
-                "\nREQ_ID | TYPE_ID | FROM | TO | STATUS | REASON"
-            );
+            System.out.println("\nREQ_ID | TYPE_ID | FROM | TO | STATUS | REASON");
 
             for (LeaveRequest lr : leaves) {
                 System.out.println(
-                    lr.getLeaveReqId() + " | " +
-                    lr.getLeaveTypeId() + " | " +
-                    lr.getFromDate() + " | " +
-                    lr.getToDate() + " | " +
-                    lr.getStatus() + " | " +
-                    lr.getReason()
+                        lr.getLeaveReqId() + " | " +
+                        lr.getLeaveTypeId() + " | " +
+                        lr.getFromDate() + " | " +
+                        lr.getToDate() + " | " +
+                        lr.getStatus() + " | " +
+                        lr.getReason()
                 );
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error fetching leaves: " + e.getMessage());
+            System.out.println("❌ Error fetching leaves");
         }
     }
+
+    // ---------------- VIEW LEAVE BALANCE ----------------
+    private void viewLeaveBalance(Employee user) {
+        try {
+            List<LeaveBalance> balances =
+                    leaveBalanceService.viewMyLeaveBalance(user.getEmpId());
+
+            if (balances.isEmpty()) {
+                System.out.println(" No leave balance found.");
+                return;
+            }
+
+            System.out.println("\nTYPE_ID | AVAILABLE_DAYS");
+
+            for (LeaveBalance lb : balances) {
+                System.out.println(
+                    lb.getLeaveTypeId() + " | " +
+                    lb.getAvailableDays()
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Error fetching leave balance");
+        }
+    }
+
 
     // ---------------- VIEW PROFILE ----------------
     private void viewProfile(Employee user) {
@@ -131,5 +165,56 @@ public class EmployeeMenu {
         System.out.println("Email : " + user.getEmail());
         System.out.println("Role  : " + user.getRole());
         System.out.println("Status: " + user.getStatus());
+    }
+
+    // ---------------- PERFORMANCE REVIEW ----------------
+    private void viewPerformanceReviews(Employee user) {
+        try {
+            List<PerformanceReview> reviews =
+                    reviewService.viewPerformanceReviews(user.getEmpId());
+
+            if (reviews.isEmpty()) {
+                System.out.println("⚠️ No performance reviews found.");
+                return;
+            }
+
+            System.out.println("\nYEAR | RATING | SELF REVIEW | MANAGER FEEDBACK");
+
+            for (PerformanceReview pr : reviews) {
+                System.out.println(
+                        pr.getReviewYear() + " | " +
+                        pr.getRating() + " | " +
+                        pr.getSelfReview() + " | " +
+                        pr.getManagerFeedback()
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Error fetching performance reviews");
+        }
+    }
+
+    // ---------------- VIEW NOTIFICATIONS ----------------
+    private void viewNotifications(Employee user) {
+        try {
+            List<Notification> notifications =
+                    notificationService.viewNotifications(user.getEmpId());
+
+            if (notifications.isEmpty()) {
+                System.out.println(" No notifications available.");
+                return;
+            }
+
+            System.out.println("\n--- NOTIFICATIONS ---");
+
+            for (Notification n : notifications) {
+                System.out.println(
+                        n.getCreatedAt() + " : " + n.getMessage()
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Error fetching notifications");
+        }
     }
 }

@@ -102,5 +102,16 @@ public class LeaveService {
 
         leaveDAO.updateLeaveStatus(leaveReqId, "REJECTED");
     }
+    
+
+ // ---------------- MANAGER: VIEW TEAM LEAVES ----------------
+    public List<LeaveRequest> manageTeamLeaves(int managerId)
+            throws DatabaseException {
+
+        // Manager can view all pending leave requests
+        // No manager_id mapping exists in DB
+        return leaveDAO.getPendingLeaves();
+    }
+
 }
 

@@ -19,7 +19,7 @@ public class EmployeeService {
     // -------- LOGIN / AUTHENTICATE --------
     public Employee login(String email, String password)
             throws EmployeeNotFoundException, DatabaseException, InvalidInputException {
-        if (email == null || email.trim().length() == 0 || password == null || password.trim().length() == 0) {
+        if (email == null || email.trim().length()<=8|| !email.trim().toLowerCase().endsWith("@rev.com") || password == null || password.trim().length()<6 ) {
             throw new InvalidInputException("Email and password cannot be empty");
         }
 
@@ -94,5 +94,31 @@ public class EmployeeService {
             throw new InvalidInputException("Search keyword cannot be empty");
         }
         return employeeDAO.searchEmployees(keyword);
+    }
+ // ---------------- CRUD OPERATIONS ----------------
+    public List<Employee> getAllEmployees() throws EmployeeNotFoundException, DatabaseException {
+        List<Employee> list = employeeDAO.getAllEmployees();
+        if(list.isEmpty()) throw new EmployeeNotFoundException("No employees found");
+        return list;
+    }
+
+    public Employee getEmployeeById(int empId) throws EmployeeNotFoundException, DatabaseException {
+        Employee emp = employeeDAO.getEmployeeById(empId);
+        if(emp == null) throw new EmployeeNotFoundException("Employee not found with ID: " + empId);
+        return emp;
+    }
+
+    public void addEmployee(Employee emp) throws DatabaseException {
+        employeeDAO.addEmployee(emp);
+    }
+
+    public void updateEmployee(Employee emp) throws DatabaseException {
+        employeeDAO.updateEmployee(emp);
+    }
+
+    public List<Employee> searchEmployees(String keyword) throws EmployeeNotFoundException, DatabaseException {
+        List<Employee> list = employeeDAO.searchEmployees(keyword);
+        if(list.isEmpty()) throw new EmployeeNotFoundException("No matching employees found");
+        return list;
     }
 }

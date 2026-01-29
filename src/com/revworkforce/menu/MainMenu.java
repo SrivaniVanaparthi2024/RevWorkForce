@@ -1,10 +1,12 @@
+// ----------------- MainMenu.java -----------------
 package com.revworkforce.menu;
 
 import com.revworkforce.auth.Session;
+import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.model.Employee;
 
 public class MainMenu {
-    public void showMenu() {
+    public void showMenu() throws DatabaseException {
         Employee user = Session.getCurrentUser();
         if (user == null) { 
             System.out.println("❌ No active session!"); 
@@ -15,25 +17,10 @@ public class MainMenu {
         boolean exit = false;
 
         while (!exit) {
-            if ("ADMIN".equals(role)) {
-                AdminMenu adminMenu = new AdminMenu();
-                adminMenu.showMenu();
-                exit = true;
-
-            } else if ("MANAGER".equals(role)) {
-                ManagerMenu managerMenu = new ManagerMenu();
-                managerMenu.showMenu();
-                exit = true;
-
-            } else if ("EMPLOYEE".equals(role)) {
-                EmployeeMenu employeeMenu = new EmployeeMenu();
-                employeeMenu.showMenu();
-                exit = true;
-
-            } else {
-                System.out.println("❌ Unknown role!");
-                exit = true;
-            }
+            if ("ADMIN".equals(role)) { new AdminMenu().showMenu(); exit=true; }
+            else if ("MANAGER".equals(role)) { new ManagerMenu().showMenu(); exit=true; }
+            else if ("EMPLOYEE".equals(role)) { new EmployeeMenu().showMenu(); exit=true; }
+            else { System.out.println("❌ Unknown role!"); exit=true; }
         }
     }
 }

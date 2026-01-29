@@ -4,6 +4,7 @@ import com.revworkforce.model.Employee;
 import com.revworkforce.service.EmployeeService;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.EmployeeNotFoundException;
+import com.revworkforce.exception.InvalidInputException;
 
 import java.util.Scanner;
 
@@ -24,17 +25,23 @@ public class AuthService {
         String password = sc.nextLine();
 
         try {
-            Employee emp = employeeService.authenticate(email, password);
+            Employee emp = employeeService.login(email, password);
             Session.setCurrentUser(emp);
+            System.out.println("✅ Login successful!");
             return true;
+
+        } catch (InvalidInputException e) {
+            System.out.println("❌ " + e.getMessage());
 
         } catch (EmployeeNotFoundException e) {
             System.out.println("❌ Invalid email or password!");
+
         } catch (DatabaseException e) {
             System.out.println("❌ DB Error: " + e.getMessage());
         }
         return false;
     }
+
 
     public void logout() {
         Session.logout();

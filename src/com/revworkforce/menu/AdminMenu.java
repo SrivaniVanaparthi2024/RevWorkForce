@@ -1,7 +1,10 @@
 package com.revworkforce.menu;
 
 import com.revworkforce.model.Employee;
+import com.revworkforce.service.AttendanceService;
+import com.revworkforce.service.DepartmentService;
 import com.revworkforce.service.EmployeeService;
+import com.revworkforce.service.PayrollService;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.EmployeeNotFoundException;
 
@@ -11,42 +14,66 @@ import java.sql.Date;
 
 public class AdminMenu {
 
-    private Scanner sc = new Scanner(System.in);
+	private Scanner sc = new Scanner(System.in);
     private EmployeeService employeeService = new EmployeeService();
+    private DepartmentService departmentService = new DepartmentService();
+    private AttendanceService attendanceService = new AttendanceService();
+    private PayrollService payrollService = new PayrollService();
 
     public void showMenu() {
+
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("\n🔐 ADMIN MENU");
+
+            System.out.println("\n ADMIN MENU");
             System.out.println("1. Manage Employees");
             System.out.println("2. Manage Departments");
-            System.out.println("3. Manage Leaves");
-            System.out.println("4. Manage Holidays");
-            System.out.println("5. Manage Announcements");
-            System.out.println("6. Logout");
+            System.out.println("3. Manage Attendance");
+            System.out.println("4. Manage Payroll");
+            System.out.println("5. Logout");
 
             System.out.print("Enter choice: ");
-            String option = sc.nextLine();
+            int option = sc.nextInt();
 
-            if ("1".equals(option)) manageEmployees();
-            else if ("2".equals(option)) System.out.println("📌 Department Module Coming Soon...");
-            else if ("3".equals(option)) System.out.println("📌 Leave Module Coming Soon...");
-            else if ("4".equals(option)) System.out.println("📌 Holiday Module Coming Soon...");
-            else if ("5".equals(option)) System.out.println("📌 Announcement Module Coming Soon...");
-            else if ("6".equals(option)) { 
-                System.out.println("👋 Logging out...");
-                exit = true; 
+            switch (option) {
+
+                case 1:
+                    manageEmployees();
+                    break;
+
+                case 2:
+                    departmentService.manageDepartments();
+                    break;
+
+                case 3:
+                    attendanceService.manageAttendance();
+                    break;
+
+                case 4:
+                    payrollService.managePayroll();
+                    break;
+
+                case 5:
+                    System.out.println("👋 Logging out...");
+                    exit = true;   // return control to main loop
+                    break;
+
+                default:
+                    System.out.println("❌ Invalid choice! Please select 1-5.");
             }
-            else System.out.println("❌ Invalid choice! Please select 1-6.");
         }
     }
 
+
+
     // ---------------- EMPLOYEE MANAGEMENT ----------------
     private void manageEmployees() {
+
         boolean back = false;
 
         while (!back) {
+
             System.out.println("\n=== ADMIN → EMPLOYEE MANAGEMENT ===");
             System.out.println("1. View All Employees");
             System.out.println("2. View Employee By ID");
@@ -58,19 +85,48 @@ public class AdminMenu {
             System.out.println("8. Back");
 
             System.out.print("Enter choice: ");
-            String choice = sc.nextLine();
+            int choice = sc.nextInt();
 
-            if ("1".equals(choice)) viewAllEmployees();
-            else if ("2".equals(choice)) viewEmployeeById();
-            else if ("3".equals(choice)) addEmployee();
-            else if ("4".equals(choice)) updateEmployee();
-            else if ("5".equals(choice)) toggleEmployeeStatus();
-            else if ("6".equals(choice)) assignManager();
-            else if ("7".equals(choice)) searchEmployee();
-            else if ("8".equals(choice)) back = true;
-            else System.out.println("❌ Invalid choice! Please select 1-8.");
+            switch (choice) {
+
+                case 1:
+                    viewAllEmployees();
+                    break;
+
+                case 2:
+                    viewEmployeeById();
+                    break;
+
+                case 3:
+                    addEmployee();
+                    break;
+
+                case 4:
+                    updateEmployee();
+                    break;
+
+                case 5:
+                    toggleEmployeeStatus();
+                    break;
+
+                case 6:
+                    assignManager();
+                    break;
+
+                case 7:
+                    searchEmployee();
+                    break;
+
+                case 8:
+                    back = true;
+                    break;
+
+                default:
+                    System.out.println("❌ Invalid choice! Please select 1-8.");
+            }
         }
     }
+
 
 
     // ---------------- EMPLOYEE FUNCTIONS ----------------

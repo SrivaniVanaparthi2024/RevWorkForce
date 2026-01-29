@@ -1,87 +1,113 @@
 package com.revworkforce.dao;
 
-
-
 import com.revworkforce.model.Department;
 import com.revworkforce.util.DBUtil;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentDAO {
-    private Connection conn = DBUtil.getConnection();
+    private Connection conn;
+
+    public DepartmentDAO() {
+        conn = DBUtil.getConnection();
+    }
 
     public boolean addDepartment(Department dept) {
-        String sql = "INSERT INTO department (dept_id, dept_name, location) VALUES (dept_seq.NEXTVAL, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps = null;
+        try {
+            String sql = "INSERT INTO department (dept_id, dept_name, location) VALUES (dept_seq.NEXTVAL, ?, ?)";
+            ps = conn.prepareStatement(sql);
             ps.setString(1, dept.getDeptName());
             ps.setString(2, dept.getLocation());
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error adding department: " + e.getMessage());
             return false;
+        } finally {
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
         }
     }
 
     public boolean updateDepartment(Department dept) {
-        String sql = "UPDATE departments SET dept_name=?, location=? WHERE dept_id=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps = null;
+        try {
+            String sql = "UPDATE department SET dept_name=?, location=? WHERE dept_id=?";
+            ps = conn.prepareStatement(sql);
             ps.setString(1, dept.getDeptName());
             ps.setString(2, dept.getLocation());
             ps.setInt(3, dept.getDeptId());
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error updating department: " + e.getMessage());
             return false;
+        } finally {
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
         }
     }
 
     public boolean deleteDepartment(int deptId) {
-        String sql = "DELETE FROM departments WHERE dept_id=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps = null;
+        try {
+            String sql = "DELETE FROM department WHERE dept_id=?";
+            ps = conn.prepareStatement(sql);
             ps.setInt(1, deptId);
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error deleting department: " + e.getMessage());
             return false;
+        } finally {
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
         }
     }
 
     public Department getDepartmentById(int deptId) {
-        String sql = "SELECT * FROM departments WHERE dept_id=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Department dept = null;
+        try {
+            String sql = "SELECT * FROM department WHERE dept_id=?";
+            ps = conn.prepareStatement(sql);
             ps.setInt(1, deptId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Department(
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                dept = new Department(
                         rs.getInt("dept_id"),
                         rs.getString("dept_name"),
                         rs.getString("location")
                 );
             }
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error fetching department: " + e.getMessage());
+        } finally {
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
         }
-        return null;
+        return dept;
     }
 
     public List<Department> getAllDepartments() {
-        List<Department> list = new ArrayList<>();
-        String sql = "SELECT * FROM departments";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                list.add(new Department(
+        List<Department> list = new ArrayList<Department>();
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT * FROM department";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                Department dept = new Department(
                         rs.getInt("dept_id"),
                         rs.getString("dept_name"),
                         rs.getString("location")
-                ));
+                );
+                list.add(dept);
             }
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error fetching departments: " + e.getMessage());
+        } finally {
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(stmt != null) stmt.close(); } catch(Exception e) {}
         }
         return list;
     }
 }
-

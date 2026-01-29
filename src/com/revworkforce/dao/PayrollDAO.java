@@ -1,38 +1,48 @@
 package com.revworkforce.dao;
 
-
 import com.revworkforce.model.Payroll;
 import com.revworkforce.util.DBUtil;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PayrollDAO {
-    private Connection conn = DBUtil.getConnection();
+    private Connection conn;
+
+    public PayrollDAO() {
+        conn = DBUtil.getConnection();
+    }
 
     public boolean addPayroll(Payroll payroll) {
-        String sql = "INSERT INTO payroll (payroll_id, emp_id, basic_salary, allowances, deductions) " +
-                     "VALUES (pay_seq.NEXTVAL, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps = null;
+        try {
+            String sql = "INSERT INTO payroll (payroll_id, emp_id, basic_salary, allowances, deductions) " +
+                    "VALUES (pay_seq.NEXTVAL, ?, ?, ?, ?)";
+            ps = conn.prepareStatement(sql);
             ps.setInt(1, payroll.getEmpId());
             ps.setDouble(2, payroll.getBasicSalary());
             ps.setDouble(3, payroll.getAllowances());
             ps.setDouble(4, payroll.getDeductions());
             return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error adding payroll: " + e.getMessage());
             return false;
+        } finally {
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
         }
     }
 
     public Payroll getPayrollByEmpId(int empId) {
-        String sql = "SELECT * FROM payroll WHERE emp_id=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Payroll p = null;
+        try {
+            String sql = "SELECT * FROM payroll WHERE emp_id=?";
+            ps = conn.prepareStatement(sql);
             ps.setInt(1, empId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Payroll(
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                p = new Payroll(
                         rs.getInt("payroll_id"),
                         rs.getInt("emp_id"),
                         rs.getDouble("basic_salary"),
@@ -40,30 +50,39 @@ public class PayrollDAO {
                         rs.getDouble("deductions")
                 );
             }
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error fetching payroll: " + e.getMessage());
+        } finally {
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(ps != null) ps.close(); } catch(Exception e) {}
         }
-        return null;
+        return p;
     }
 
     public List<Payroll> getAllPayroll() {
-        List<Payroll> list = new ArrayList<>();
-        String sql = "SELECT * FROM payroll";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                list.add(new Payroll(
+        List<Payroll> list = new ArrayList<Payroll>();
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT * FROM payroll";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            while(rs.next()) {
+                Payroll p = new Payroll(
                         rs.getInt("payroll_id"),
                         rs.getInt("emp_id"),
                         rs.getDouble("basic_salary"),
                         rs.getDouble("allowances"),
                         rs.getDouble("deductions")
-                ));
+                );
+                list.add(p);
             }
-        } catch (SQLException e) {
+        } catch(SQLException e) {
             System.out.println("Error fetching payroll: " + e.getMessage());
+        } finally {
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(stmt != null) stmt.close(); } catch(Exception e) {}
         }
         return list;
     }
 }
-
