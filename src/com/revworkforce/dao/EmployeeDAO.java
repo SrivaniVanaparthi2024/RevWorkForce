@@ -255,6 +255,46 @@ public class EmployeeDAO {
             closeResources(null, ps);
         }
     }
+    
+    public List<Employee> findByManager(int managerId) throws DatabaseException {
+
+        List<Employee> employees = new ArrayList<Employee>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        String sql = "SELECT * FROM employee WHERE manager_id = ?";
+
+        try {
+            conn = DBUtil.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, managerId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Employee emp = new Employee();
+                emp.setEmpId(rs.getInt("emp_id"));
+                emp.setEmpName(rs.getString("name"));
+                emp.setEmail(rs.getString("email"));
+                emp.setRole(rs.getString("role"));
+                emp.setManagerId(rs.getInt("manager_id"));
+                emp.setStatus(rs.getString("status"));
+                employees.add(emp);
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Error fetching employees under manager", e);
+
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+
+        return employees;
+    }
+
+
 
     // ---------------- AUTHENTICATE EMPLOYEE ----------------
     public Employee getEmployeeByEmailAndPassword(String email, String password) throws DatabaseException {

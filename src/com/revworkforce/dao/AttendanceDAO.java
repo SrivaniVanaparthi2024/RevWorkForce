@@ -26,7 +26,7 @@ public class AttendanceDAO {
     }
 
     public List<Attendance> getAttendanceByEmpId(int empId) {
-        List<Attendance> list = new ArrayList<>();
+        List<Attendance> list = new ArrayList<Attendance>();
         String sql = "SELECT * FROM attendance WHERE emp_id=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, empId);
@@ -46,7 +46,7 @@ public class AttendanceDAO {
     }
 
     public List<Attendance> getAllAttendance() {
-        List<Attendance> list = new ArrayList<>();
+        List<Attendance> list = new ArrayList<Attendance>();
         String sql = "SELECT * FROM attendance";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

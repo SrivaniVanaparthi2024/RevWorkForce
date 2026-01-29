@@ -14,7 +14,7 @@ public class RevWorkForceApp {
 
         Connection conn = DBUtil.getConnection();
         if (conn == null) {
-            System.out.println("❌ Cannot connect to DB. Exiting...");
+            System.out.println(" Cannot connect to DB. Exiting...");
             return;
         }
 
@@ -25,11 +25,11 @@ public class RevWorkForceApp {
 
         while (true) {
 
-            // 🔐 Login loop
+            //  Login loop
             while (!Session.isLoggedIn()) {
                 boolean success = authService.login();
                 if (!success) {
-                    System.out.println("🔁 Please try again.\n");
+                    System.out.println(" Please try again.\n");
                 }
             }
 
@@ -38,21 +38,21 @@ public class RevWorkForceApp {
                 "Welcome " + Session.getCurrentUser().getEmpName()
             );
 
-            // 📋 Show menu
+            //  Show menu
             MainMenu mainMenu = new MainMenu();
             mainMenu.showMenu();
 
-            // 🚪 Exit?
+            //  Exit?
             System.out.print("\nDo you want to exit system? (Y/N): ");
             if (sc.nextLine().equalsIgnoreCase("Y")) {
                 System.out.println(" Goodbye!");
                 break;
             }
 
-            // 🔓 Logout
+            //  Logout
             authService.logout();
         }
 
-        sc.close();
+//        sc.close();
     }
 }

@@ -7,6 +7,7 @@ import com.revworkforce.exception.EmployeeNotFoundException;
 
 import java.util.List;
 import java.util.Scanner;
+import java.sql.Date;
 
 public class AdminMenu {
 
@@ -59,29 +60,20 @@ public class AdminMenu {
             System.out.print("Enter choice: ");
             String choice = sc.nextLine();
 
-            if ("1".equals(choice)) {
-                viewAllEmployees();
-            } else if ("2".equals(choice)) {
-                viewEmployeeById();
-            } else if ("3".equals(choice)) {
-                System.out.println("📌 Add Employee Module Coming Soon...");
-            } else if ("4".equals(choice)) {
-                System.out.println("📌 Update Employee Module Coming Soon...");
-            } else if ("5".equals(choice)) {
-                System.out.println("📌 Deactivate/Reactivate Module Coming Soon...");
-            } else if ("6".equals(choice)) {
-                System.out.println("📌 Assign/Change Manager Module Coming Soon...");
-            } else if ("7".equals(choice)) {
-                System.out.println("📌 Search Employee Module Coming Soon...");
-            } else if ("8".equals(choice)) {
-                back = true;
-            } else {
-                System.out.println("❌ Invalid choice! Please select 1-8.");
-            }
-
+            if ("1".equals(choice)) viewAllEmployees();
+            else if ("2".equals(choice)) viewEmployeeById();
+            else if ("3".equals(choice)) addEmployee();
+            else if ("4".equals(choice)) updateEmployee();
+            else if ("5".equals(choice)) toggleEmployeeStatus();
+            else if ("6".equals(choice)) assignManager();
+            else if ("7".equals(choice)) searchEmployee();
+            else if ("8".equals(choice)) back = true;
+            else System.out.println("❌ Invalid choice! Please select 1-8.");
         }
     }
 
+
+    // ---------------- EMPLOYEE FUNCTIONS ----------------
     private void viewAllEmployees() {
         try {
             List<Employee> employees = employeeService.getAllEmployees();
@@ -120,11 +112,19 @@ public class AdminMenu {
     private void addEmployee() {
         try {
             Employee emp = new Employee();
+
             System.out.print("Name: "); emp.setEmpName(sc.nextLine());
             System.out.print("Email: "); emp.setEmail(sc.nextLine());
+            System.out.print("Password: "); emp.setPassword(sc.nextLine());
             System.out.print("Role (ADMIN/MANAGER/EMPLOYEE): "); emp.setRole(sc.nextLine().toUpperCase());
             System.out.print("Dept ID: "); emp.setDeptId(Integer.parseInt(sc.nextLine()));
             System.out.print("Designation ID: "); emp.setDesignationId(Integer.parseInt(sc.nextLine()));
+            System.out.print("Phone: "); emp.setPhone(sc.nextLine());
+            System.out.print("Address: "); emp.setAddress(sc.nextLine());
+            System.out.print("DOB (yyyy-mm-dd): "); emp.setDob(Date.valueOf(sc.nextLine()));
+            System.out.print("Joining Date (yyyy-mm-dd): "); emp.setJoiningDate(Date.valueOf(sc.nextLine()));
+            System.out.print("Emergency Contact Name: "); emp.setEmergencyContactName(sc.nextLine());
+            System.out.print("Emergency Contact Phone: "); emp.setEmergencyContactPhone(sc.nextLine());
             emp.setStatus("ACTIVE");
 
             employeeService.addEmployee(emp);
@@ -133,6 +133,8 @@ public class AdminMenu {
             System.out.println("❌ DB Error: " + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("❌ Enter valid numeric values for IDs.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Invalid date format. Use yyyy-mm-dd.");
         }
     }
 
@@ -157,6 +159,24 @@ public class AdminMenu {
             System.out.print("New Designation ID (" + emp.getDesignationId() + "): "); 
             String desig = sc.nextLine(); if (!desig.isEmpty()) emp.setDesignationId(Integer.parseInt(desig));
 
+            System.out.print("New Phone (" + emp.getPhone() + "): ");
+            String phone = sc.nextLine(); if (!phone.isEmpty()) emp.setPhone(phone);
+
+            System.out.print("New Address (" + emp.getAddress() + "): ");
+            String address = sc.nextLine(); if (!address.isEmpty()) emp.setAddress(address);
+
+            System.out.print("New DOB (" + emp.getDob() + "): ");
+            String dob = sc.nextLine(); if (!dob.isEmpty()) emp.setDob(Date.valueOf(dob));
+
+            System.out.print("New Joining Date (" + emp.getJoiningDate() + "): ");
+            String joining = sc.nextLine(); if (!joining.isEmpty()) emp.setJoiningDate(Date.valueOf(joining));
+
+            System.out.print("New Emergency Contact Name (" + emp.getEmergencyContactName() + "): ");
+            String eName = sc.nextLine(); if (!eName.isEmpty()) emp.setEmergencyContactName(eName);
+
+            System.out.print("New Emergency Contact Phone (" + emp.getEmergencyContactPhone() + "): ");
+            String ePhone = sc.nextLine(); if (!ePhone.isEmpty()) emp.setEmergencyContactPhone(ePhone);
+
             employeeService.updateEmployee(emp);
             System.out.println("✅ Employee updated successfully!");
         } catch (EmployeeNotFoundException e) {
@@ -165,6 +185,8 @@ public class AdminMenu {
             System.out.println("❌ DB Error: " + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("❌ Enter valid numeric values for IDs.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Invalid date format. Use yyyy-mm-dd.");
         }
     }
 
@@ -192,14 +214,22 @@ public class AdminMenu {
 
             System.out.print("Enter Manager Employee ID: ");
             int managerId = Integer.parseInt(sc.nextLine());
-            emp.setManagerId(managerId);
 
+            Employee manager = employeeService.getEmployeeById(managerId);
+            if (!manager.getRole().equalsIgnoreCase("MANAGER") && !manager.getRole().equalsIgnoreCase("ADMIN")) {
+                System.out.println("❌ Selected employee is not a valid manager.");
+                return;
+            }
+
+            emp.setManagerId(managerId);
             employeeService.updateEmployee(emp);
             System.out.println("✅ Manager assigned successfully!");
         } catch (EmployeeNotFoundException e) {
             System.out.println("⚠️ " + e.getMessage());
         } catch (DatabaseException e) {
             System.out.println("❌ DB Error: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Enter valid numeric IDs.");
         }
     }
 
@@ -217,7 +247,6 @@ public class AdminMenu {
         }
     }
 
-
     private void printEmployeeDetails(Employee emp) {
         System.out.println("\n--- EMPLOYEE DETAILS ---");
         System.out.println("ID       : " + emp.getEmpId());
@@ -227,6 +256,12 @@ public class AdminMenu {
         System.out.println("Dept ID  : " + emp.getDeptId());
         System.out.println("Desig ID : " + emp.getDesignationId());
         System.out.println("Manager  : " + emp.getManagerId());
+        System.out.println("Phone    : " + emp.getPhone());
+        System.out.println("Address  : " + emp.getAddress());
+        System.out.println("DOB      : " + emp.getDob());
+        System.out.println("Joining  : " + emp.getJoiningDate());
+        System.out.println("Emergency Name  : " + emp.getEmergencyContactName());
+        System.out.println("Emergency Phone : " + emp.getEmergencyContactPhone());
         System.out.println("Status   : " + emp.getStatus());
     }
 }
