@@ -17,7 +17,8 @@ public class LeaveBalance {
         this.availableDays = availableDays;
     }
 
-    public int getBalanceId() {
+
+	public int getBalanceId() {
         return balanceId;
     }
 
