@@ -31,22 +31,42 @@ public class DepartmentService {
     }
 
     private void addDepartment() {
-        System.out.print("Department Name: "); String name = sc.nextLine();
-        System.out.print("Location: "); String loc = sc.nextLine();
-        Department dept = new Department(0, name, loc);
-        if(deptDAO.addDepartment(dept)) System.out.println("✅ Added successfully");
-        else System.out.println("❌ Failed to add");
+        System.out.print("Department Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Status (ACTIVE/INACTIVE): ");
+        String status = sc.nextLine();
+
+        Department dept = new Department(0, name, status);
+        if (deptDAO.addDepartment(dept))
+            System.out.println("✅ Added successfully");
+        else
+            System.out.println("❌ Failed to add");
     }
 
     private void updateDepartment() {
-        System.out.print("Department ID to update: "); int id = Integer.parseInt(sc.nextLine());
+        System.out.print("Department ID to update: ");
+        int id = Integer.parseInt(sc.nextLine());
+
         Department dept = deptDAO.getDepartmentById(id);
-        if(dept == null) { System.out.println("❌ Not found"); return; }
-        System.out.print("New Name ("+dept.getDeptName()+"): "); String name = sc.nextLine();
-        System.out.print("New Location ("+dept.getLocation()+"): "); String loc = sc.nextLine();
-        dept.setDeptName(name); dept.setLocation(loc);
-        if(deptDAO.updateDepartment(dept)) System.out.println("✅ Updated successfully");
-        else System.out.println("❌ Failed to update");
+        if (dept == null) {
+            System.out.println("❌ Not found");
+            return;
+        }
+
+        System.out.print("New Name (" + dept.getDeptName() + "): ");
+        String name = sc.nextLine();
+
+        System.out.print("New Status (" + dept.getStatus() + "): ");
+        String status = sc.nextLine();
+
+        if (!name.isEmpty()) dept.setDeptName(name);
+        if (!status.isEmpty()) dept.setStatus(status);
+
+        if (deptDAO.updateDepartment(dept))
+            System.out.println("✅ Updated successfully");
+        else
+            System.out.println("❌ Failed to update");
     }
 
     private void deleteDepartment() {
@@ -57,9 +77,13 @@ public class DepartmentService {
 
     private void viewDepartments() {
         List<Department> list = deptDAO.getAllDepartments();
-        System.out.println("\nID\tName\tLocation");
-        for(Department d : list) {
-            System.out.println(d.getDeptId()+"\t"+d.getDeptName()+"\t"+d.getLocation());
+        System.out.println("\nID\tName\tStatus");
+        for (Department d : list) {
+            System.out.println(
+                d.getDeptId() + "\t" +
+                d.getDeptName() + "\t" +
+                d.getStatus()
+            );
         }
     }
 }

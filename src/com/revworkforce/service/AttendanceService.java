@@ -29,12 +29,39 @@ public class AttendanceService {
     }
 
     private void addAttendance() {
-        System.out.print("Employee ID: "); int empId = Integer.parseInt(sc.nextLine());
-        System.out.print("Date (yyyy-mm-dd): "); String d = sc.nextLine();
-        System.out.print("Status (Present/Absent): "); String status = sc.nextLine();
-        Attendance att = new Attendance(0, empId, Date.valueOf(d), status);
-        if(attDAO.addAttendance(att)) System.out.println("✅ Attendance added!");
-        else System.out.println("❌ Failed to add attendance.");
+        try {
+            System.out.print("Employee ID: ");
+            int empId = Integer.parseInt(sc.nextLine().trim());
+
+            System.out.print("Date (yyyy-MM-dd): ");
+            String d = sc.nextLine().trim();
+
+            Date date;
+            try {
+                date = Date.valueOf(d);   // strict format
+            } catch (IllegalArgumentException e) {
+                System.out.println("❌ Invalid date format. Use yyyy-MM-dd (e.g., 2026-01-30)");
+                return;
+            }
+
+            System.out.print("Status (PRESENT/ABSENT/LEAVE): ");
+            String status = sc.nextLine().trim().toUpperCase();
+
+            if (!status.equals("PRESENT") && !status.equals("ABSENT") && !status.equals("LEAVE")) {
+                System.out.println("❌ Invalid status.");
+                return;
+            }
+
+            Attendance att = new Attendance(0, empId, date, status);
+
+            if (attDAO.addAttendance(att))
+                System.out.println("✅ Attendance added!");
+            else
+                System.out.println("❌ Failed to add attendance.");
+
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Employee ID must be a number.");
+        }
     }
 
  // Called from EmployeeMenu
@@ -58,10 +85,10 @@ public class AttendanceService {
         } else {
             list = attDAO.getAllAttendance();
         }
-//        System.out.println("\nID\tEmpID\tDate\tStatus");
-//        for(Attendance a: list) {
-//            System.out.println(a.getAttendanceId()+"\t"+a.getEmpId()+"\t"+a.getDate()+"\t"+a.getStatus());
-//        }
+        System.out.println("\nID\tEmpID\tDate\tStatus");
+        for(Attendance a: list) {
+            System.out.println(a.getAttendanceId()+"\t"+a.getEmpId()+"\t"+a.getDate()+"\t"+a.getStatus());
+        }
     }
     private void printAttendance(List<Attendance> list) {
         System.out.println("\nID\tEmpID\tDate\tStatus");

@@ -69,20 +69,45 @@ public class EmployeeService {
         return employeeDAO.findByManager(managerId);
     }
 
-    // -------- ACTIVATE / DEACTIVATE --------
-    public boolean deactivateEmployee(int empId) throws EmployeeNotFoundException, DatabaseException {
+ // -------- ACTIVATE / DEACTIVATE --------
+    public boolean deactivateEmployee(int empId)
+            throws EmployeeNotFoundException, DatabaseException, InvalidInputException {
+
+        if (empId <= 0) {
+            throw new InvalidInputException("Invalid employee ID");
+        }
+
         employeeDAO.changeEmployeeStatus(empId, "INACTIVE");
         return true;
     }
 
-    public boolean activateEmployee(int empId) throws EmployeeNotFoundException, DatabaseException {
+    public boolean activateEmployee(int empId)
+            throws EmployeeNotFoundException, DatabaseException, InvalidInputException {
+
+        if (empId <= 0) {
+            throw new InvalidInputException("Invalid employee ID");
+        }
+
         employeeDAO.changeEmployeeStatus(empId, "ACTIVE");
         return true;
     }
 
-    // -------- ASSIGN MANAGER --------
-    public boolean assignManager(int empId, int managerId) throws EmployeeNotFoundException, DatabaseException {
+ // -------- ASSIGN MANAGER --------
+    public boolean assignManager(int empId, int managerId)
+            throws EmployeeNotFoundException, DatabaseException, InvalidInputException {
+
+        if (empId <= 0 || managerId <= 0) {
+            throw new InvalidInputException("Invalid employee or manager ID");
+        }
+
         Employee emp = employeeDAO.getEmployeeById(empId);
+        Employee manager = employeeDAO.getEmployeeById(managerId);
+
+        if (!"MANAGER".equalsIgnoreCase(manager.getRole())
+                && !"ADMIN".equalsIgnoreCase(manager.getRole())) {
+            throw new InvalidInputException("Selected employee is not a manager");
+        }
+
         emp.setManagerId(managerId);
         employeeDAO.updateEmployee(emp);
         return true;

@@ -16,12 +16,17 @@ public class AttendanceDAO {
     public boolean addAttendance(Attendance att) {
         PreparedStatement ps = null;
         try {
-            String sql = "INSERT INTO attendance (attendance_id, emp_id, att_date, status) VALUES (att_seq.NEXTVAL, ?, ?, ?)";
+            String sql =
+                "INSERT INTO attendance (attendance_id, emp_id, attendance_date, status) " +
+                "VALUES (attendance_seq.NEXTVAL, ?, ?, ?)";
+
             ps = conn.prepareStatement(sql);
             ps.setInt(1, att.getEmpId());
             ps.setDate(2, att.getDate());
             ps.setString(3, att.getStatus());
+
             return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.out.println("Error adding attendance: " + e.getMessage());
             return false;
@@ -43,7 +48,7 @@ public class AttendanceDAO {
                 Attendance a = new Attendance(
                         rs.getInt("attendance_id"),
                         rs.getInt("emp_id"),
-                        rs.getDate("att_date"),
+                        rs.getDate("attendance_date"),
                         rs.getString("status")
                 );
                 list.add(a);
@@ -69,7 +74,7 @@ public class AttendanceDAO {
                 Attendance a = new Attendance(
                         rs.getInt("attendance_id"),
                         rs.getInt("emp_id"),
-                        rs.getDate("att_date"),
+                        rs.getDate("attendance_date"),
                         rs.getString("status")
                 );
                 list.add(a);

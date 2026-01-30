@@ -35,7 +35,7 @@ public class AdminMenu {
 
             System.out.print("Enter choice: ");
             int option = sc.nextInt();
-
+            sc.nextLine();
             switch (option) {
 
                 case 1:
@@ -86,7 +86,7 @@ public class AdminMenu {
 
             System.out.print("Enter choice: ");
             int choice = sc.nextInt();
-
+            sc.nextLine();
             switch (choice) {
 
                 case 1:
@@ -153,7 +153,8 @@ public class AdminMenu {
     private void viewEmployeeById() {
         try {
             System.out.print("Enter Employee ID: ");
-            int empId = Integer.parseInt(sc.nextLine());
+            int empId = sc.nextInt();
+            sc.nextLine();
             Employee emp = employeeService.getEmployeeById(empId);
             printEmployeeDetails(emp);
         } catch (NumberFormatException e) {
@@ -169,87 +170,166 @@ public class AdminMenu {
         try {
             Employee emp = new Employee();
 
-            System.out.print("Name: "); emp.setEmpName(sc.nextLine());
-            System.out.print("Email: "); emp.setEmail(sc.nextLine());
-            System.out.print("Password: "); emp.setPassword(sc.nextLine());
-            System.out.print("Role (ADMIN/MANAGER/EMPLOYEE): "); emp.setRole(sc.nextLine().toUpperCase());
-            System.out.print("Dept ID: "); emp.setDeptId(Integer.parseInt(sc.nextLine()));
-            System.out.print("Designation ID: "); emp.setDesignationId(Integer.parseInt(sc.nextLine()));
-            System.out.print("Phone: "); emp.setPhone(sc.nextLine());
-            System.out.print("Address: "); emp.setAddress(sc.nextLine());
-            System.out.print("DOB (yyyy-mm-dd): "); emp.setDob(Date.valueOf(sc.nextLine()));
-            System.out.print("Joining Date (yyyy-mm-dd): "); emp.setJoiningDate(Date.valueOf(sc.nextLine()));
-            System.out.print("Emergency Contact Name: "); emp.setEmergencyContactName(sc.nextLine());
-            System.out.print("Emergency Contact Phone: "); emp.setEmergencyContactPhone(sc.nextLine());
+            // ---------------- MANDATORY FIELDS ----------------
+            System.out.print("Name: ");
+            String name = sc.nextLine().trim();
+            if (name.isEmpty()) { System.out.println("❌ Name is required."); return; }
+            emp.setEmpName(name);
+
+            System.out.print("Email (@rev.com): ");
+            String email = sc.nextLine().trim().toLowerCase();
+            if (!email.endsWith("@rev.com") || email.length() <= 8) {
+                System.out.println("❌ Invalid email format."); return;
+            }
+            emp.setEmail(email);
+
+            System.out.print("Password (min 6 chars): ");
+            String pwd = sc.nextLine().trim();
+            if (pwd.length() < 6) { System.out.println("❌ Password too short."); return; }
+            emp.setPassword(pwd);
+
+            System.out.print("Role (ADMIN/MANAGER/EMPLOYEE): ");
+            String role = sc.nextLine().trim().toUpperCase();
+            if (!role.equals("ADMIN") && !role.equals("MANAGER") && !role.equals("EMPLOYEE")) {
+                System.out.println("❌ Invalid role."); return;
+            }
+            emp.setRole(role);
+
+            System.out.print("Dept ID: ");
+            int deptId = Integer.parseInt(sc.nextLine().trim());
+            emp.setDeptId(deptId);
+
+            System.out.print("Designation ID: ");
+            int desigId = Integer.parseInt(sc.nextLine().trim());
+            emp.setDesignationId(desigId);
+
+            System.out.print("Phone (10 digits): ");
+            String phone = sc.nextLine().trim();
+            if (!phone.matches("\\d{10}")) { System.out.println("❌ Invalid phone number."); return; }
+            emp.setPhone(phone);
+
+            System.out.print("Address: ");
+            emp.setAddress(sc.nextLine().trim());
+
+            System.out.print("DOB (yyyy-MM-dd): ");
+            try { emp.setDob(Date.valueOf(sc.nextLine().trim())); }
+            catch (IllegalArgumentException e) { System.out.println("❌ Invalid DOB format."); return; }
+
+            System.out.print("Joining Date (yyyy-MM-dd): ");
+            try { emp.setJoiningDate(Date.valueOf(sc.nextLine().trim())); }
+            catch (IllegalArgumentException e) { System.out.println("❌ Invalid joining date format."); return; }
+
+            System.out.print("Emergency Contact Name: ");
+            emp.setEmergencyContactName(sc.nextLine().trim());
+
+            System.out.print("Emergency Contact Phone: ");
+            String ePhone = sc.nextLine().trim();
+            if (!ePhone.isEmpty() && !ePhone.matches("\\d{10}")) {
+                System.out.println("❌ Invalid emergency contact phone."); return;
+            }
+            emp.setEmergencyContactPhone(ePhone);
+
             emp.setStatus("ACTIVE");
 
             employeeService.addEmployee(emp);
             System.out.println("✅ Employee added successfully!");
+
         } catch (DatabaseException e) {
             System.out.println("❌ DB Error: " + e.getMessage());
         } catch (NumberFormatException e) {
-            System.out.println("❌ Enter valid numeric values for IDs.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("❌ Invalid date format. Use yyyy-mm-dd.");
+            System.out.println("❌ Invalid numeric input for Dept or Designation ID.");
         }
     }
 
     private void updateEmployee() {
         try {
             System.out.print("Enter Employee ID to update: ");
-            int empId = Integer.parseInt(sc.nextLine());
+            int empId = Integer.parseInt(sc.nextLine().trim());
             Employee emp = employeeService.getEmployeeById(empId);
 
-            System.out.print("New Name (" + emp.getEmpName() + "): "); 
-            String name = sc.nextLine(); if (!name.isEmpty()) emp.setEmpName(name);
+            System.out.print("New Name (" + emp.getEmpName() + "): ");
+            String name = sc.nextLine().trim();
+            if (!name.isEmpty()) emp.setEmpName(name);
 
-            System.out.print("New Email (" + emp.getEmail() + "): "); 
-            String email = sc.nextLine(); if (!email.isEmpty()) emp.setEmail(email);
+            System.out.print("New Email (" + emp.getEmail() + "): ");
+            String email = sc.nextLine().trim().toLowerCase();
+            if (!email.isEmpty()) {
+                if (!email.endsWith("@rev.com") || email.length() <= 8) {
+                    System.out.println("❌ Invalid email format."); return;
+                }
+                emp.setEmail(email);
+            }
 
-            System.out.print("New Role (" + emp.getRole() + "): "); 
-            String role = sc.nextLine(); if (!role.isEmpty()) emp.setRole(role.toUpperCase());
+            System.out.print("New Role (" + emp.getRole() + "): ");
+            String role = sc.nextLine().trim().toUpperCase();
+            if (!role.isEmpty()) {
+                if (!role.equals("ADMIN") && !role.equals("MANAGER") && !role.equals("EMPLOYEE")) {
+                    System.out.println("❌ Invalid role."); return;
+                }
+                emp.setRole(role);
+            }
 
-            System.out.print("New Dept ID (" + emp.getDeptId() + "): "); 
-            String dept = sc.nextLine(); if (!dept.isEmpty()) emp.setDeptId(Integer.parseInt(dept));
+            System.out.print("New Dept ID (" + emp.getDeptId() + "): ");
+            String dept = sc.nextLine().trim();
+            if (!dept.isEmpty()) emp.setDeptId(Integer.parseInt(dept));
 
-            System.out.print("New Designation ID (" + emp.getDesignationId() + "): "); 
-            String desig = sc.nextLine(); if (!desig.isEmpty()) emp.setDesignationId(Integer.parseInt(desig));
+            System.out.print("New Designation ID (" + emp.getDesignationId() + "): ");
+            String desig = sc.nextLine().trim();
+            if (!desig.isEmpty()) emp.setDesignationId(Integer.parseInt(desig));
 
             System.out.print("New Phone (" + emp.getPhone() + "): ");
-            String phone = sc.nextLine(); if (!phone.isEmpty()) emp.setPhone(phone);
+            String phone = sc.nextLine().trim();
+            if (!phone.isEmpty() && !phone.matches("\\d{10}")) {
+                System.out.println("❌ Invalid phone number."); return;
+            }
+            if (!phone.isEmpty()) emp.setPhone(phone);
 
             System.out.print("New Address (" + emp.getAddress() + "): ");
-            String address = sc.nextLine(); if (!address.isEmpty()) emp.setAddress(address);
+            String address = sc.nextLine().trim();
+            if (!address.isEmpty()) emp.setAddress(address);
 
             System.out.print("New DOB (" + emp.getDob() + "): ");
-            String dob = sc.nextLine(); if (!dob.isEmpty()) emp.setDob(Date.valueOf(dob));
+            String dob = sc.nextLine().trim();
+            if (!dob.isEmpty()) {
+                try { emp.setDob(Date.valueOf(dob)); }
+                catch (IllegalArgumentException e) { System.out.println("❌ Invalid DOB format."); return; }
+            }
 
             System.out.print("New Joining Date (" + emp.getJoiningDate() + "): ");
-            String joining = sc.nextLine(); if (!joining.isEmpty()) emp.setJoiningDate(Date.valueOf(joining));
+            String joining = sc.nextLine().trim();
+            if (!joining.isEmpty()) {
+                try { emp.setJoiningDate(Date.valueOf(joining)); }
+                catch (IllegalArgumentException e) { System.out.println("❌ Invalid joining date format."); return; }
+            }
 
             System.out.print("New Emergency Contact Name (" + emp.getEmergencyContactName() + "): ");
-            String eName = sc.nextLine(); if (!eName.isEmpty()) emp.setEmergencyContactName(eName);
+            String eName = sc.nextLine().trim();
+            if (!eName.isEmpty()) emp.setEmergencyContactName(eName);
 
             System.out.print("New Emergency Contact Phone (" + emp.getEmergencyContactPhone() + "): ");
-            String ePhone = sc.nextLine(); if (!ePhone.isEmpty()) emp.setEmergencyContactPhone(ePhone);
+            String ePhone = sc.nextLine().trim();
+            if (!ePhone.isEmpty() && !ePhone.matches("\\d{10}")) {
+                System.out.println("❌ Invalid emergency contact phone."); return;
+            }
+            if (!ePhone.isEmpty()) emp.setEmergencyContactPhone(ePhone);
 
             employeeService.updateEmployee(emp);
             System.out.println("✅ Employee updated successfully!");
+
         } catch (EmployeeNotFoundException e) {
             System.out.println("⚠️ " + e.getMessage());
         } catch (DatabaseException e) {
             System.out.println("❌ DB Error: " + e.getMessage());
         } catch (NumberFormatException e) {
-            System.out.println("❌ Enter valid numeric values for IDs.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("❌ Invalid date format. Use yyyy-mm-dd.");
+            System.out.println("❌ Invalid numeric input for IDs.");
         }
     }
 
     private void toggleEmployeeStatus() {
         try {
             System.out.print("Enter Employee ID: ");
-            int empId = Integer.parseInt(sc.nextLine());
+            int empId = sc.nextInt();
+            sc.nextLine();
             Employee emp = employeeService.getEmployeeById(empId);
             String newStatus = emp.getStatus().equalsIgnoreCase("ACTIVE") ? "INACTIVE" : "ACTIVE";
             emp.setStatus(newStatus);
@@ -265,7 +345,8 @@ public class AdminMenu {
     private void assignManager() {
         try {
             System.out.print("Enter Employee ID: ");
-            int empId = Integer.parseInt(sc.nextLine());
+            int empId = sc.nextInt();
+            sc.nextLine();
             Employee emp = employeeService.getEmployeeById(empId);
 
             System.out.print("Enter Manager Employee ID: ");

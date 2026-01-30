@@ -41,10 +41,10 @@ public class PayrollService {
     }
 
     private void addPayroll() {
-        System.out.print("Employee ID: "); int empId = Integer.parseInt(sc.nextLine());
-        System.out.print("Basic Salary: "); double basic = Double.parseDouble(sc.nextLine());
-        System.out.print("Allowances: "); double allowance = Double.parseDouble(sc.nextLine());
-        System.out.print("Deductions: "); double deduction = Double.parseDouble(sc.nextLine());
+        System.out.print("Employee ID: "); int empId = sc.nextInt();sc.nextLine();
+        System.out.print("Basic Salary: "); double basic = sc.nextDouble();sc.nextLine();
+        System.out.print("Allowances: "); double allowance = sc.nextDouble();sc.nextLine();
+        System.out.print("Deductions: "); double deduction = sc.nextDouble();sc.nextLine();
         Payroll p = new Payroll(0, empId, basic, allowance, deduction);
         if(payrollDAO.addPayroll(p)) System.out.println("✅ Added successfully");
         else System.out.println("❌ Failed to add");

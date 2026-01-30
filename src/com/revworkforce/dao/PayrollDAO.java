@@ -17,7 +17,7 @@ public class PayrollDAO {
         PreparedStatement ps = null;
         try {
             String sql = "INSERT INTO payroll (payroll_id, emp_id, basic_salary, allowances, deductions) " +
-                    "VALUES (pay_seq.NEXTVAL, ?, ?, ?, ?)";
+                    "VALUES (payroll_seq.NEXTVAL, ?, ?, ?, ?)";
             ps = conn.prepareStatement(sql);
             ps.setInt(1, payroll.getEmpId());
             ps.setDouble(2, payroll.getBasicSalary());

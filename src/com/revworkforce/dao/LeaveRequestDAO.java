@@ -26,7 +26,7 @@ public class LeaveRequestDAO {
         String sql =
             "INSERT INTO leave_request " +
             "(leave_req_id, emp_id, leave_type_id, from_date, to_date, reason, status) " +
-            "VALUES (leave_req_seq.NEXTVAL, ?, ?, ?, ?, ?, ?)";
+            "VALUES (leave_request_seq.NEXTVAL, ?, ?, ?, ?, ?, ?)";
 
         try {
             con = DBUtil.getConnection();

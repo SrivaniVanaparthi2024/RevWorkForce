@@ -16,10 +16,10 @@ public class DepartmentDAO {
     public boolean addDepartment(Department dept) {
         PreparedStatement ps = null;
         try {
-            String sql = "INSERT INTO department (dept_id, dept_name, location) VALUES (dept_seq.NEXTVAL, ?, ?)";
+            String sql = "INSERT INTO department (dept_id, dept_name, status) VALUES (dept_seq.NEXTVAL, ?, ?)";
             ps = conn.prepareStatement(sql);
             ps.setString(1, dept.getDeptName());
-            ps.setString(2, dept.getLocation());
+            ps.setString(2, dept.getStatus());
             return ps.executeUpdate() > 0;
         } catch(SQLException e) {
             System.out.println("Error adding department: " + e.getMessage());
@@ -32,10 +32,10 @@ public class DepartmentDAO {
     public boolean updateDepartment(Department dept) {
         PreparedStatement ps = null;
         try {
-            String sql = "UPDATE department SET dept_name=?, location=? WHERE dept_id=?";
+            String sql = "UPDATE department SET dept_name=?, status=? WHERE dept_id=?";
             ps = conn.prepareStatement(sql);
             ps.setString(1, dept.getDeptName());
-            ps.setString(2, dept.getLocation());
+            ps.setString(2, dept.getStatus());
             ps.setInt(3, dept.getDeptId());
             return ps.executeUpdate() > 0;
         } catch(SQLException e) {
@@ -74,7 +74,7 @@ public class DepartmentDAO {
                 dept = new Department(
                         rs.getInt("dept_id"),
                         rs.getString("dept_name"),
-                        rs.getString("location")
+                        rs.getString("status")
                 );
             }
         } catch(SQLException e) {
@@ -98,7 +98,7 @@ public class DepartmentDAO {
                 Department dept = new Department(
                         rs.getInt("dept_id"),
                         rs.getString("dept_name"),
-                        rs.getString("location")
+                        rs.getString("status")
                 );
                 list.add(dept);
             }
