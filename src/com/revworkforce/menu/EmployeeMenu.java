@@ -31,7 +31,7 @@ public class EmployeeMenu {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private java.util.Scanner sc = new java.util.Scanner(System.in);
 
-    public void showMenu() {
+    public void showMenu() throws InvalidInputException {
         Employee user = Session.getCurrentUser();
         if (user == null) {
             System.out.println("❌ No active session!");
@@ -51,8 +51,13 @@ public class EmployeeMenu {
             System.out.println("8. View My Payroll");
             System.out.println("9. Logout");
             System.out.print("Enter choice: ");
+            
+            
             String choice = sc.nextLine();
-
+            if (choice == null || choice.trim().isEmpty()) {
+                throw new InvalidInputException("Input cannot be empty.");
+            }
+            
             if ("1".equals(choice)) applyLeave(user);
             else if ("2".equals(choice)) viewMyLeaves(user);
             else if ("3".equals(choice)) viewLeaveBalance(user);
@@ -72,7 +77,7 @@ public class EmployeeMenu {
             LeaveRequest lr = new LeaveRequest();
             lr.setEmpId(user.getEmpId());
 
-            System.out.print("Leave Type ID: ");
+            System.out.print("Leave Type(1-sick/2-causal/3-paidLeave) ID: ");
             lr.setLeaveTypeId(Integer.parseInt(sc.nextLine()));
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -169,6 +174,7 @@ public class EmployeeMenu {
 
     // ---------------- PERFORMANCE REVIEW ----------------
     private void viewPerformanceReviews(Employee user) {
+
         try {
             List<PerformanceReview> reviews =
                     reviewService.viewPerformanceReviews(user.getEmpId());
@@ -178,19 +184,23 @@ public class EmployeeMenu {
                 return;
             }
 
-            System.out.println("\nYEAR | RATING | SELF REVIEW | MANAGER FEEDBACK");
+            System.out.println("\nID | YEAR | RATING | MANAGER FEEDBACK");
 
             for (PerformanceReview pr : reviews) {
                 System.out.println(
-                        pr.getReviewYear() + " | " +
-                        pr.getRating() + " | " +
-                        pr.getSelfReview() + " | " +
-                        pr.getManagerFeedback()
+                    pr.getReviewId() + " | " +
+                    pr.getReviewYear() + " | " +
+                    pr.getRating() + " | " +
+                    pr.getManagerFeedback()
                 );
             }
 
+        } catch (InvalidInputException e) {
+            System.out.println("⚠️ " + e.getMessage());
+        } catch (DatabaseException e) {
+            System.out.println("❌ DB Error: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("❌ Error fetching performance reviews");
+            System.out.println("❌ Unexpected error");
         }
     }
 
@@ -214,7 +224,9 @@ public class EmployeeMenu {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error fetching notifications");
+            System.out.println("No notifications found");
         }
     }
+    
+    
 }

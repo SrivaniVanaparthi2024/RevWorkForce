@@ -90,7 +90,45 @@ public class LeaveRequestDAO {
     }
 
     // ---------------- VIEW PENDING LEAVES (MANAGER) ----------------
-    public List<LeaveRequest> getPendingLeaves() throws DatabaseException {
+//    public List<LeaveRequest> getPendingLeaves() throws DatabaseException {
+//
+//        List<LeaveRequest> list = new ArrayList<LeaveRequest>();
+//        Connection con = null;
+//        PreparedStatement ps = null;
+//        ResultSet rs = null;
+//
+//        String sql =
+//            "SELECT * FROM leave_request WHERE status = 'PENDING'";
+//
+//        try {
+//            con = DBUtil.getConnection();
+//            ps = con.prepareStatement(sql);
+//            rs = ps.executeQuery();
+//
+//            while (rs.next()) {
+//                LeaveRequest lr = new LeaveRequest();
+//                lr.setLeaveReqId(rs.getInt("leave_req_id"));
+//                lr.setEmpId(rs.getInt("emp_id"));
+//                lr.setLeaveTypeId(rs.getInt("leave_type_id"));
+//                lr.setFromDate(rs.getDate("from_date"));
+//                lr.setToDate(rs.getDate("to_date"));
+//                lr.setReason(rs.getString("reason"));
+//                lr.setStatus(rs.getString("status"));
+//
+//                list.add(lr);
+//            }
+//
+//        } catch (SQLException e) {
+//            throw new DatabaseException("Error fetching pending leaves", e);
+//        } finally {
+//            close(ps, rs);
+//        }
+//
+//        return list;
+//    }
+    
+    public List<LeaveRequest> getPendingLeavesByManager(int managerId)
+            throws DatabaseException {
 
         List<LeaveRequest> list = new ArrayList<LeaveRequest>();
         Connection con = null;
@@ -98,11 +136,16 @@ public class LeaveRequestDAO {
         ResultSet rs = null;
 
         String sql =
-            "SELECT * FROM leave_request WHERE status = 'PENDING'";
+            "SELECT lr.* " +
+            "FROM leave_request lr " +
+            "JOIN employee e ON lr.emp_id = e.emp_id " +
+            "WHERE lr.status = 'PENDING' " +
+            "AND e.manager_id = ?";
 
         try {
             con = DBUtil.getConnection();
             ps = con.prepareStatement(sql);
+            ps.setInt(1, managerId);
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -119,7 +162,7 @@ public class LeaveRequestDAO {
             }
 
         } catch (SQLException e) {
-            throw new DatabaseException("Error fetching pending leaves", e);
+            throw new DatabaseException("Error fetching manager pending leaves", e);
         } finally {
             close(ps, rs);
         }
@@ -151,6 +194,7 @@ public class LeaveRequestDAO {
             close(ps, null);
         }
     }
+    
 
     // ---------------- CLOSE RESOURCES ----------------
     private void close(PreparedStatement ps, ResultSet rs) {

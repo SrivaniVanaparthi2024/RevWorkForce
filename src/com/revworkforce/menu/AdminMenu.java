@@ -195,11 +195,11 @@ public class AdminMenu {
             }
             emp.setRole(role);
 
-            System.out.print("Dept ID: ");
+            System.out.print("Dept ID(HR-1/IT-2): ");
             int deptId = Integer.parseInt(sc.nextLine().trim());
             emp.setDeptId(deptId);
 
-            System.out.print("Designation ID: ");
+            System.out.print("Designation ID(Manager-1/Emp-2): ");
             int desigId = Integer.parseInt(sc.nextLine().trim());
             emp.setDesignationId(desigId);
 

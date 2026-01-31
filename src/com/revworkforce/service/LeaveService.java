@@ -75,10 +75,19 @@ public class LeaveService {
     }
 
     // ---------------- VIEW PENDING LEAVES (MANAGER) ----------------
-    public List<LeaveRequest> viewPendingLeaves()
-            throws DatabaseException {
+//    public List<LeaveRequest> viewPendingLeaves()
+//            throws DatabaseException {
+//
+//        return leaveDAO.getPendingLeaves();
+//    }
+    public List<LeaveRequest> viewPendingLeavesForManager(int managerId)
+            throws DatabaseException, InvalidInputException {
 
-        return leaveDAO.getPendingLeaves();
+        if (managerId <= 0) {
+            throw new InvalidInputException("Invalid manager ID");
+        }
+
+        return leaveDAO.getPendingLeavesByManager(managerId);
     }
 
     // ---------------- APPROVE LEAVE ----------------
@@ -110,7 +119,7 @@ public class LeaveService {
 
         // Manager can view all pending leave requests
         // No manager_id mapping exists in DB
-        return leaveDAO.getPendingLeaves();
+        return leaveDAO.getPendingLeavesByManager(managerId);
     }
 
 }

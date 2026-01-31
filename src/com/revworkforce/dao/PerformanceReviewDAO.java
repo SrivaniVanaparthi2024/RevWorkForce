@@ -54,4 +54,73 @@ public class PerformanceReviewDAO {
 
         return reviews;
     }
+ // ---------- INSERT MANAGER REVIEW ----------
+    public void addManagerReview(PerformanceReview pr) throws DatabaseException {
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        String sql =
+            "INSERT INTO performance_review " +
+            "(review_id, emp_id, review_year, self_review, manager_feedback, rating)"+
+            		"VALUES (review_seq.NEXTVAL, ?, ?, NULL, ?, ?)";
+
+        try {
+            con = DBUtil.getConnection();
+            ps = con.prepareStatement(sql);
+
+            ps.setInt(1, pr.getEmpId());
+            ps.setInt(2, pr.getReviewYear());
+            ps.setString(3, pr.getManagerFeedback());
+            ps.setInt(4, pr.getRating());
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            throw new DatabaseException("Error adding manager review", e);
+        } finally {
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (con != null) con.close(); } catch (Exception e) {}
+        }
+    }
+
+
+    // ---------- UPDATE SELF REVIEW ----------
+//    public void updateSelfReview(int empId, int reviewId, String selfReview)
+//            throws DatabaseException {
+//
+//        Connection con = null;
+//        PreparedStatement ps = null;
+//
+//        String sql =
+//            "UPDATE performance_review " +
+//            "SET self_review=? " +
+//            "WHERE review_id=? AND emp_id=?";
+//
+//        try {
+//            con = DBUtil.getConnection();
+//            ps = con.prepareStatement(sql);
+//
+//            ps.setString(1, selfReview);
+//            ps.setInt(2, reviewId);
+//            ps.setInt(3, empId);
+//
+//            int rows = ps.executeUpdate();
+//
+////            // ✅ VALIDATION RESULT
+////            if (rows == 0) {
+////                throw new DatabaseException(
+////                    "Self review update failed. Use only your emp_id."
+////                );
+////            }
+//
+//        } catch (DatabaseException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            throw new DatabaseException("Error updating self review", e);
+//        } finally {
+//            try { if (ps != null) ps.close(); } catch (Exception e) {}
+//            try { if (con != null) con.close(); } catch (Exception e) {}
+//        }
+//    }
 }

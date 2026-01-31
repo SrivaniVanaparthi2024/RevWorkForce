@@ -95,12 +95,7 @@ public class LeaveServiceTest {
     }
 
     // ---------- VIEW PENDING LEAVES ----------
-    @Test
-    public void testViewPendingLeaves()
-            throws DatabaseException {
-
-        assertNotNull(leaveService.viewPendingLeaves());
-    }
+  
 
     // ---------- APPROVE LEAVE ----------
     @Test

@@ -7,12 +7,19 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AttendanceService {
+	private static final Logger logger =
+            LoggerFactory.getLogger(AttendanceService.class);
+	
     private AttendanceDAO attDAO = new AttendanceDAO();
     private Scanner sc = new Scanner(System.in);
 
     public void manageAttendance() {
         boolean back = false;
+        logger.info("Attendance Management menu opened");
         while (!back) {
             System.out.println("\n--- Attendance Management ---");
             System.out.println("1. Add Attendance");

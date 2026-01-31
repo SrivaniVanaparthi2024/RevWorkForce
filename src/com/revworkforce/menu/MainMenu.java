@@ -3,10 +3,11 @@ package com.revworkforce.menu;
 
 import com.revworkforce.auth.Session;
 import com.revworkforce.exception.DatabaseException;
+import com.revworkforce.exception.InvalidInputException;
 import com.revworkforce.model.Employee;
 
 public class MainMenu {
-    public void showMenu() throws DatabaseException {
+    public void showMenu() throws DatabaseException, InvalidInputException {
         Employee user = Session.getCurrentUser();
         if (user == null) { 
             System.out.println("❌ No active session!"); 
