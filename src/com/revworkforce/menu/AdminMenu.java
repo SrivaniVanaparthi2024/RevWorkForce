@@ -4,9 +4,11 @@ import com.revworkforce.model.Employee;
 import com.revworkforce.service.AttendanceService;
 import com.revworkforce.service.DepartmentService;
 import com.revworkforce.service.EmployeeService;
+import com.revworkforce.service.HolidayService;
 import com.revworkforce.service.PayrollService;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.EmployeeNotFoundException;
+import com.revworkforce.exception.InvalidInputException;
 
 import java.util.List;
 import java.util.Scanner;
@@ -19,8 +21,8 @@ public class AdminMenu {
     private DepartmentService departmentService = new DepartmentService();
     private AttendanceService attendanceService = new AttendanceService();
     private PayrollService payrollService = new PayrollService();
-
-    public void showMenu() {
+    private HolidayService holidayService = new HolidayService();
+    public void showMenu() throws InvalidInputException, DatabaseException {
 
         boolean exit = false;
 
@@ -31,7 +33,8 @@ public class AdminMenu {
             System.out.println("2. Manage Departments");
             System.out.println("3. Manage Attendance");
             System.out.println("4. Manage Payroll");
-            System.out.println("5. Logout");
+            System.out.println("5. view Holidays");
+            System.out.println("6. Logout");
 
             System.out.print("Enter choice: ");
             int option = sc.nextInt();
@@ -55,7 +58,10 @@ public class AdminMenu {
                     break;
 
                 case 5:
-                    System.out.println("👋 Logging out...");
+                	holidayService.viewHolidays();
+                	break;
+                case 6:
+                    System.out.println(" Logging out...");
                     exit = true;   // return control to main loop
                     break;
 

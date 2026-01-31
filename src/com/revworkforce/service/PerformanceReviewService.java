@@ -11,7 +11,23 @@ import java.util.List;
 
 public class PerformanceReviewService {
 
-    private PerformanceReviewDAO reviewDAO = new PerformanceReviewDAO();
+//    private PerformanceReviewDAO reviewDAO = new PerformanceReviewDAO();
+    private PerformanceReviewDAO reviewDAO;
+    private EmployeeDAO empDAO;
+    
+    //  Default constructor (needed for app runtime)
+    public PerformanceReviewService() {
+        this.reviewDAO = new PerformanceReviewDAO();
+        this.empDAO = new EmployeeDAO();
+    }
+
+    //  Constructor for TESTING (Mockito)
+    public PerformanceReviewService(
+            PerformanceReviewDAO reviewDAO,
+            EmployeeDAO empDAO) {
+        this.reviewDAO = reviewDAO;
+        this.empDAO = empDAO;
+    }
 
     public List<PerformanceReview> viewPerformanceReviews(int empId) throws InvalidInputException, DatabaseException {
         if (empId <= 0) {
@@ -42,7 +58,7 @@ public class PerformanceReviewService {
             throw new InvalidInputException("Rating must be between 1 and 5");
         }
 
-        EmployeeDAO empDAO = new EmployeeDAO();
+//        EmployeeDAO empDAO = new EmployeeDAO();
         Employee emp;
 
         try {
@@ -51,7 +67,7 @@ public class PerformanceReviewService {
             throw new InvalidInputException("Employee not found");
         }
 
-        // ✅ ONLY manager-side validation
+        // ONLY manager-side validation
         if (emp.getManagerId() == null || emp.getManagerId().intValue() != managerId) {
             throw new InvalidInputException("Employee does not report to you");
         }

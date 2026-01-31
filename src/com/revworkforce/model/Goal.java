@@ -5,7 +5,7 @@ import java.util.Date;
 public class Goal {
 
     private int goalId;
-    private int reviewId;
+    private int empId;
     private String description;
     private Date deadline;
     private String priority;
@@ -15,11 +15,11 @@ public class Goal {
     public Goal() {
     }
 
-    public Goal(int goalId, int reviewId, String description,
+    public Goal(int goalId, int empId, String description,
                 Date deadline, String priority,
                 int progressPercentage, String status) {
         this.goalId = goalId;
-        this.reviewId = reviewId;
+        this.empId = empId;
         this.description = description;
         this.deadline = deadline;
         this.priority = priority;
@@ -35,12 +35,12 @@ public class Goal {
         this.goalId = goalId;
     }
 
-    public int getReviewId() {
-        return reviewId;
+    public int getempId() {
+        return empId;
     }
 
-    public void setReviewId(int reviewId) {
-        this.reviewId = reviewId;
+    public void setempId(int empId) {
+        this.empId = empId;
     }
 
     public String getDescription() {

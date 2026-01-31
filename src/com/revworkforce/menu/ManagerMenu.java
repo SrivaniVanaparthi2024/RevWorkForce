@@ -6,6 +6,7 @@ import com.revworkforce.dao.EmployeeDAO;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.model.Employee;
 import com.revworkforce.model.LeaveRequest;
+import com.revworkforce.service.HolidayService;
 import com.revworkforce.service.LeaveService;
 import com.revworkforce.service.AttendanceService;
 import com.revworkforce.service.PayrollService;
@@ -19,6 +20,7 @@ public class ManagerMenu {
     private LeaveService leaveService = new LeaveService();
     private AttendanceService attendanceService = new AttendanceService();
     private PayrollService payrollService = new PayrollService();
+    private HolidayService holidayservice=new HolidayService();
 
     public void showMenu() throws DatabaseException {
         Employee user = Session.getCurrentUser();
@@ -26,21 +28,23 @@ public class ManagerMenu {
 
         boolean exit = false;
         while (!exit) {
-            System.out.println("\n📋 MANAGER MENU");
+            System.out.println("\n MANAGER MENU");
             System.out.println("1. Approve Leaves");
             System.out.println("2. give emp performace review");
             System.out.println("3. View Team Attendance");
             System.out.println("4. View Team Payroll");
-            System.out.println("5. Logout");
+            System.out.println("5. view Holidays");
+            System.out.println("6. Logout");
             System.out.print("Enter choice: ");
             String choice = sc.nextLine();
 
-//            if ("1".equals(choice)) leaveService.manageTeamLeaves(user.getEmpId());
+
             if ("1".equals(choice)) approveLeaves();
             else if ("2".equals(choice)) giveEmployeePerformanceReview();
             else if ("3".equals(choice)) attendanceService.viewAttendanceForManager(user.getEmpId());
             else if ("4".equals(choice)) payrollService.viewPayrollForManager(user.getEmpId());
-            else if ("5".equals(choice)) { System.out.println("👋 Logging out..."); exit=true; }
+            else if ("5".equals(choice)) holidayservice.viewHolidays();
+            else if ("6".equals(choice)) { System.out.println("👋 Logging out..."); exit=true; }
             else System.out.println("❌ Invalid choice! Please select 1-5.");
         }
             
@@ -132,7 +136,7 @@ public class ManagerMenu {
                     rating
             );
 
-            System.out.println("✅ Performance review added");
+            System.out.println("Performance review added");
 
         } catch (Exception e) {
             System.out.println("❌ " + e.getMessage());

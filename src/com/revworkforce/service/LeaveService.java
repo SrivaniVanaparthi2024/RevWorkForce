@@ -74,12 +74,7 @@ public class LeaveService {
         return leaveDAO.getLeavesByEmpId(empId);
     }
 
-    // ---------------- VIEW PENDING LEAVES (MANAGER) ----------------
-//    public List<LeaveRequest> viewPendingLeaves()
-//            throws DatabaseException {
-//
-//        return leaveDAO.getPendingLeaves();
-//    }
+
     public List<LeaveRequest> viewPendingLeavesForManager(int managerId)
             throws DatabaseException, InvalidInputException {
 

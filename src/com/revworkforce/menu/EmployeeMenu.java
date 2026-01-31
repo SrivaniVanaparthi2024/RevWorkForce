@@ -2,11 +2,14 @@ package com.revworkforce.menu;
 
 import com.revworkforce.auth.Session;
 import com.revworkforce.model.Employee;
+import com.revworkforce.model.Goal;
 import com.revworkforce.model.LeaveBalance;
 import com.revworkforce.model.LeaveRequest;
 import com.revworkforce.model.PerformanceReview;
 import com.revworkforce.model.Notification;
 import com.revworkforce.service.AttendanceService;
+import com.revworkforce.service.GoalService;
+import com.revworkforce.service.HolidayService;
 import com.revworkforce.service.LeaveBalanceService;
 import com.revworkforce.service.LeaveService;
 import com.revworkforce.service.PayrollService;
@@ -28,6 +31,8 @@ public class EmployeeMenu {
     private LeaveBalanceService leaveBalanceService = new LeaveBalanceService();
     private AttendanceService attendanceService = new AttendanceService();
     private PayrollService payrollService = new PayrollService();
+    private HolidayService holidayservice=new HolidayService();
+    private GoalService goalservice=new GoalService();
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private java.util.Scanner sc = new java.util.Scanner(System.in);
 
@@ -49,7 +54,11 @@ public class EmployeeMenu {
             System.out.println("6. View Notifications");
             System.out.println("7. View My Attendance");
             System.out.println("8. View My Payroll");
-            System.out.println("9. Logout");
+            System.out.println("9. view Holidays");
+            System.out.println("10. add goals");
+            System.out.println("11. update goals");
+            System.out.println("12. view goals");
+            System.out.println("13. Logout");
             System.out.print("Enter choice: ");
             
             
@@ -66,11 +75,100 @@ public class EmployeeMenu {
             else if ("6".equals(choice)) viewNotifications(user);
             else if ("7".equals(choice)) attendanceService.viewAttendanceForEmployee(user.getEmpId());
             else if ("8".equals(choice)) payrollService.viewPayrollForEmployee(user.getEmpId());
-            else if ("9".equals(choice)) { Session.logout(); exit=true; }
+            else if ("9".equals(choice)) holidayservice.viewHolidays();
+            else if ("10".equals(choice)) addGoal(user);
+            else if ("11".equals(choice)) updateGoal(user);
+            else if ("12".equals(choice)) viewGoals(user);
+            else if ("13".equals(choice)) { Session.logout(); exit=true; }
             else System.out.println("❌ Invalid choice!");
         }
     }
+    //------------add goals----------------
+    private void addGoal(Employee user) {
+        try {
+            Goal goal = new Goal();
 
+            System.out.print("Goal Description: ");
+            goal.setDescription(sc.nextLine());
+
+            System.out.print("Deadline (yyyy-MM-dd): ");
+            goal.setDeadline(simpleDateFormat.parse(sc.nextLine()));
+
+            System.out.print("Priority (HIGH / MEDIUM / LOW): ");
+            goal.setPriority(sc.nextLine().toUpperCase());
+
+            System.out.print("Progress Percentage (0-100): ");
+            goal.setProgressPercentage(Integer.parseInt(sc.nextLine()));
+
+            goal.setStatus("PENDING");
+
+            goalservice.addGoal(user.getEmpId(), goal);
+            System.out.println("✅ Goal added successfully");
+
+        } catch (Exception e) {
+            System.out.println("❌ " + e.getMessage());
+        }
+    }
+    
+    //-----------VIEW GOALS---------------------
+    private void viewGoals(Employee user) {
+        try {
+            List<Goal> goals = goalservice.viewGoals(user.getEmpId());
+
+            if (goals.isEmpty()) {
+                System.out.println("⚠️ No goals found");
+                return;
+            }
+
+            System.out.println("\nID | EMP_ID | DESCRIPTION | DEADLINE | PRIORITY | PROGRESS | STATUS");
+
+            for (Goal g : goals) {
+                System.out.println(
+                    g.getGoalId() + " | " +
+                    g.getempId() + " | " +
+                    g.getDescription() + " | " +
+                    g.getDeadline() + " | " +
+                    g.getPriority() + " | " +
+                    g.getProgressPercentage() + "% | " +
+                    g.getStatus()
+                );
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Error fetching goals");
+        }
+    }
+    
+    //------------------update goal-----------------
+    private void updateGoal(Employee user) {
+        try {
+            Goal goal = new Goal();
+
+            System.out.print("Enter Goal ID: ");
+            goal.setGoalId(Integer.parseInt(sc.nextLine()));
+
+            System.out.print("Description: ");
+            goal.setDescription(sc.nextLine());
+
+            System.out.print("Deadline (yyyy-MM-dd): ");
+            goal.setDeadline(simpleDateFormat.parse(sc.nextLine()));
+
+            System.out.print("Priority (HIGH / MEDIUM / LOW): ");
+            goal.setPriority(sc.nextLine().toUpperCase());
+
+            System.out.print("Progress Percentage (0-100): ");
+            goal.setProgressPercentage(Integer.parseInt(sc.nextLine()));
+
+            System.out.print("Status: ");
+            goal.setStatus(sc.nextLine());
+
+            goalservice.updateGoal(user.getEmpId(), goal);
+            System.out.println("✅ Goal updated successfully");
+
+        } catch (Exception e) {
+            System.out.println("❌ " + e.getMessage());
+        }
+    }
     // ---------------- APPLY LEAVE ----------------
     private void applyLeave(Employee user) {
         try {
