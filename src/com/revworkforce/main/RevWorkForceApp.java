@@ -44,7 +44,7 @@ public class RevWorkForceApp {
             MainMenu mainMenu = new MainMenu();
             mainMenu.showMenu();
 
-            //  Exit?
+           
             System.out.print("\nDo you want to exit system? (Y/N): ");
             if (sc.nextLine().equalsIgnoreCase("Y")) {
                 System.out.println(" Goodbye!");
@@ -54,7 +54,5 @@ public class RevWorkForceApp {
             //  Logout
             authService.logout();
         }
-
-//        sc.close();
     }
 }

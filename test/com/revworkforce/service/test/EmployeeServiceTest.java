@@ -1,6 +1,6 @@
 package com.revworkforce.service.test;
 
-import com.revworkforce.dao.EmployeeDAO;
+import com.revworkforce.dao.impl.EmployeeDAOImpl;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.EmployeeNotFoundException;
 import com.revworkforce.exception.InvalidInputException;
@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 public class EmployeeServiceTest {
 
     @Mock
-    private EmployeeDAO employeeDAO;
+    private EmployeeDAOImpl employeeDAOImpl;
 
     @InjectMocks
     private EmployeeService employeeService;
@@ -51,7 +51,7 @@ public class EmployeeServiceTest {
     public void testLoginSuccess()
             throws DatabaseException, EmployeeNotFoundException, InvalidInputException {
 
-        when(employeeDAO.getEmployeeByEmailAndPassword(
+        when(employeeDAOImpl.getEmployeeByEmailAndPassword(
                 "user@rev.com", "password123"))
                 .thenReturn(emp);
 
@@ -72,7 +72,7 @@ public class EmployeeServiceTest {
     public void testLoginEmployeeNotFound()
             throws Exception {
 
-        when(employeeDAO.getEmployeeByEmailAndPassword(
+        when(employeeDAOImpl.getEmployeeByEmailAndPassword(
                 "user@rev.com", "password123"))
                 .thenReturn(null);
 
@@ -85,7 +85,7 @@ public class EmployeeServiceTest {
     public void testGetProfile()
             throws Exception {
 
-        when(employeeDAO.getEmployeeById(101)).thenReturn(emp);
+        when(employeeDAOImpl.getEmployeeById(101)).thenReturn(emp);
 
         Employee result = employeeService.getProfile(101);
 
@@ -106,7 +106,7 @@ public class EmployeeServiceTest {
 
         boolean result = employeeService.updateProfile(emp);
 
-        verify(employeeDAO).updateEmployee(emp);
+        verify(employeeDAOImpl).updateEmployee(emp);
         assertTrue(result);
     }
 
@@ -118,8 +118,8 @@ public class EmployeeServiceTest {
 
         emp.setManagerId(201);
 
-        when(employeeDAO.getEmployeeById(101)).thenReturn(emp);
-        when(employeeDAO.getEmployeeById(201)).thenReturn(manager);
+        when(employeeDAOImpl.getEmployeeById(101)).thenReturn(emp);
+        when(employeeDAOImpl.getEmployeeById(201)).thenReturn(manager);
 
         Employee result = employeeService.getManagerDetails(101);
 
@@ -132,7 +132,7 @@ public class EmployeeServiceTest {
     public void testGetDirectReportees()
             throws Exception {
 
-        when(employeeDAO.findByManager(201))
+        when(employeeDAOImpl.findByManager(201))
                 .thenReturn(Arrays.asList(emp));
 
         List<Employee> list =
@@ -155,7 +155,7 @@ public class EmployeeServiceTest {
 
         boolean result = employeeService.deactivateEmployee(101);
 
-        verify(employeeDAO)
+        verify(employeeDAOImpl)
                 .changeEmployeeStatus(101, "INACTIVE");
         assertTrue(result);
     }
@@ -166,7 +166,7 @@ public class EmployeeServiceTest {
 
         boolean result = employeeService.activateEmployee(101);
 
-        verify(employeeDAO)
+        verify(employeeDAOImpl)
                 .changeEmployeeStatus(101, "ACTIVE");
         assertTrue(result);
     }
@@ -177,13 +177,13 @@ public class EmployeeServiceTest {
     public void testAssignManager()
             throws Exception {
 
-        when(employeeDAO.getEmployeeById(101)).thenReturn(emp);
-        when(employeeDAO.getEmployeeById(201)).thenReturn(manager);
+        when(employeeDAOImpl.getEmployeeById(101)).thenReturn(emp);
+        when(employeeDAOImpl.getEmployeeById(201)).thenReturn(manager);
 
         boolean result =
                 employeeService.assignManager(101, 201);
 
-        verify(employeeDAO).updateEmployee(emp);
+        verify(employeeDAOImpl).updateEmployee(emp);
         assertTrue(result);
     }
 
@@ -193,8 +193,8 @@ public class EmployeeServiceTest {
 
         manager.setRole("EMPLOYEE");
 
-        when(employeeDAO.getEmployeeById(101)).thenReturn(emp);
-        when(employeeDAO.getEmployeeById(201)).thenReturn(manager);
+        when(employeeDAOImpl.getEmployeeById(101)).thenReturn(emp);
+        when(employeeDAOImpl.getEmployeeById(201)).thenReturn(manager);
 
         employeeService.assignManager(101, 201);
     }
@@ -205,7 +205,7 @@ public class EmployeeServiceTest {
     public void testSearchEmployee()
             throws Exception {
 
-        when(employeeDAO.searchEmployees("john"))
+        when(employeeDAOImpl.searchEmployees("john"))
                 .thenReturn(Arrays.asList(emp));
 
         List<Employee> list =
@@ -218,5 +218,28 @@ public class EmployeeServiceTest {
     public void testSearchEmployeeInvalidKeyword()
             throws Exception {
         employeeService.searchEmployeeByKeyword("");
+    }
+    
+   
+    //login DB failure
+    @Test(expected = DatabaseException.class)
+    public void testLoginDatabaseException()
+            throws Exception {
+
+        when(employeeDAOImpl.getEmployeeByEmailAndPassword(
+                "user@rev.com", "password123"))
+                .thenThrow(new DatabaseException("DB error"));
+
+        employeeService.login("user@rev.com", "password123");
+    }
+    
+    //employee profile not found
+    @Test(expected = EmployeeNotFoundException.class)
+    public void testGetProfileEmployeeNotFound()
+            throws Exception {
+
+        when(employeeDAOImpl.getEmployeeById(101)).thenReturn(null);
+
+        employeeService.getProfile(101);
     }
 }

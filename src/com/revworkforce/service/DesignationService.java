@@ -1,6 +1,7 @@
 package com.revworkforce.service;
 
 import com.revworkforce.dao.DesignationDAO;
+import com.revworkforce.dao.impl.DesignationDAOImpl;
 import com.revworkforce.model.Designation;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class DesignationService {
     private static final Logger logger = LoggerFactory.getLogger(DesignationService.class);
 
-    private DesignationDAO dao = new DesignationDAO();
+    private DesignationDAO dao = new DesignationDAOImpl();
 
     public List<Designation> viewAllDesignations() {
         try {

@@ -2,10 +2,7 @@ package com.revworkforce.model;
 
 import java.util.Date;
 
-/**
- * Employee model represents EMPLOYEE table.
- * Follows JavaBean standards and ER diagram.
- */
+
 public class Employee {
 
     private int empId;

@@ -24,15 +24,6 @@ public class NotificationServiceTest {
         notificationService = new NotificationService();
     }
 
-    // ---------- VIEW NOTIFICATIONS SUCCESS ----------
-//    @Test
-//    public void testViewNotificationsSuccess()
-//            throws InvalidInputException, DatabaseException {
-//
-//        List<Notification> list = notificationService.viewNotifications(1);
-//
-//        assertNotNull(list);
-//    }
 
     // ---------- INVALID EMPLOYEE ID ----------
     @Test(expected = InvalidInputException.class)

@@ -1,7 +1,7 @@
 package com.revworkforce.service.test;
 
-import com.revworkforce.dao.EmployeeDAO;
-import com.revworkforce.dao.PerformanceReviewDAO;
+import com.revworkforce.dao.impl.EmployeeDAOImpl;
+import com.revworkforce.dao.impl.PerformanceReviewDAOImpl;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.EmployeeNotFoundException;
 import com.revworkforce.exception.InvalidInputException;
@@ -26,10 +26,10 @@ import static org.junit.Assert.*;
 public class PerformanceReviewServiceTest {
 
     @Mock
-    private PerformanceReviewDAO reviewDAO;
+    private PerformanceReviewDAOImpl reviewDAO;
 
     @Mock
-    private EmployeeDAO empDAO;
+    private EmployeeDAOImpl empDAO;
 
     @InjectMocks
     private PerformanceReviewService reviewService;

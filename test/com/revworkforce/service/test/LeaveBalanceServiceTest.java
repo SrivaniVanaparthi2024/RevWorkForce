@@ -1,6 +1,6 @@
 package com.revworkforce.service.test;
 
-import com.revworkforce.dao.LeaveBalanceDAO;
+import com.revworkforce.dao.impl.LeaveBalanceDAOImpl;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.InvalidInputException;
 import com.revworkforce.model.LeaveBalance;
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class LeaveBalanceServiceTest {
 
     @Mock
-    private LeaveBalanceDAO balanceDAO;
+    private LeaveBalanceDAOImpl balanceDAO;
 
     @InjectMocks
     private LeaveBalanceService leaveBalanceService;
@@ -84,4 +84,6 @@ public class LeaveBalanceServiceTest {
 
         leaveBalanceService.viewMyLeaveBalance(101);
     }
+    
+    
 }

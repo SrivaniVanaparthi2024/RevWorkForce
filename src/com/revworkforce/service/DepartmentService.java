@@ -1,6 +1,7 @@
 package com.revworkforce.service;
 
 import com.revworkforce.dao.DepartmentDAO;
+import com.revworkforce.dao.impl.DepartmentDAOImpl;
 import com.revworkforce.model.Department;
 import java.util.List;
 import java.util.Scanner;
@@ -12,7 +13,7 @@ public class DepartmentService {
     
     private static final Logger logger = LoggerFactory.getLogger(DepartmentService.class);
 
-    private DepartmentDAO deptDAO = new DepartmentDAO();
+    private DepartmentDAO deptDAO = new DepartmentDAOImpl();
     private Scanner sc = new Scanner(System.in);
 
     public void manageDepartments() {

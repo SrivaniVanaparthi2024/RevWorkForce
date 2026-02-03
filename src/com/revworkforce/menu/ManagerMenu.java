@@ -2,10 +2,11 @@
 package com.revworkforce.menu;
 
 import com.revworkforce.auth.Session;
-import com.revworkforce.dao.EmployeeDAO;
+import com.revworkforce.dao.impl.EmployeeDAOImpl;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.model.Employee;
 import com.revworkforce.model.LeaveRequest;
+import com.revworkforce.service.EmployeeService;
 import com.revworkforce.service.HolidayService;
 import com.revworkforce.service.LeaveService;
 import com.revworkforce.service.AttendanceService;
@@ -21,6 +22,7 @@ public class ManagerMenu {
     private AttendanceService attendanceService = new AttendanceService();
     private PayrollService payrollService = new PayrollService();
     private HolidayService holidayservice=new HolidayService();
+    private EmployeeService employeeService = new EmployeeService();
 
     public void showMenu() throws DatabaseException {
         Employee user = Session.getCurrentUser();
@@ -67,10 +69,10 @@ public class ManagerMenu {
             System.out.println(
                 "REQ_ID | EMP_ID | EMP_NAME | FROM | TO | TYPE_ID | REASON | STATUS");
 
-            EmployeeDAO empDAO = new EmployeeDAO();
+//            EmployeeDAOImpl empDAO = new EmployeeDAOImpl();
 
             for (LeaveRequest lr : leaves) {
-                Employee emp = empDAO.getEmployeeById(lr.getEmpId());
+                Employee emp = employeeService.getEmployeeById(lr.getEmpId());
 
                 System.out.println(
                     lr.getLeaveReqId() + " | " +

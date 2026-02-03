@@ -1,6 +1,7 @@
 package com.revworkforce.service;
 
 import com.revworkforce.dao.HolidayDAO;
+import com.revworkforce.dao.impl.HolidayDAOImpl;
 import com.revworkforce.model.Holiday;
 import com.revworkforce.exception.DatabaseException;
 import java.util.List;
@@ -12,9 +13,8 @@ public class HolidayService {
 
     private static final Logger logger = LoggerFactory.getLogger(HolidayService.class);
 
-    private HolidayDAO holidayDAO = new HolidayDAO();
+    private HolidayDAO holidayDAO = new HolidayDAOImpl();
 
-    // Called directly from Admin / Manager / Employee menus
     public void viewHolidays() {
 
         try {

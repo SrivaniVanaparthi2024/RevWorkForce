@@ -101,16 +101,17 @@ public class EmployeeMenu {
             goal.setProgressPercentage(Integer.parseInt(sc.nextLine()));
 
             goal.setStatus("PENDING");
+            goal.setempId(user.getEmpId());   // 🔥 FIX
 
             goalservice.addGoal(user.getEmpId(), goal);
             System.out.println("✅ Goal added successfully");
 
         } catch (Exception e) {
-            System.out.println("❌ " + e.getMessage());
+            System.out.println("❌ Invalid input");
         }
     }
     
-    //-----------VIEW GOALS---------------------
+    //-----------VIEW GOALS---------------------    
     private void viewGoals(Employee user) {
         try {
             List<Goal> goals = goalservice.viewGoals(user.getEmpId());
@@ -135,11 +136,11 @@ public class EmployeeMenu {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Error fetching goals");
+            System.out.println("❌ Invalid input");
         }
     }
     
-    //------------------update goal-----------------
+    //------------------update goal-----------------    
     private void updateGoal(Employee user) {
         try {
             Goal goal = new Goal();
@@ -162,11 +163,13 @@ public class EmployeeMenu {
             System.out.print("Status: ");
             goal.setStatus(sc.nextLine());
 
+            goal.setempId(user.getEmpId()); // 🔥 FIX
+
             goalservice.updateGoal(user.getEmpId(), goal);
             System.out.println("✅ Goal updated successfully");
 
         } catch (Exception e) {
-            System.out.println("❌ " + e.getMessage());
+            e.printStackTrace(); // 🔥 FIX
         }
     }
     // ---------------- APPLY LEAVE ----------------

@@ -1,6 +1,7 @@
 package com.revworkforce.service;
 
 import com.revworkforce.dao.LeaveBalanceDAO;
+import com.revworkforce.dao.impl.LeaveBalanceDAOImpl;
 import com.revworkforce.model.LeaveBalance;
 import com.revworkforce.exception.DatabaseException;
 import com.revworkforce.exception.InvalidInputException;
@@ -17,7 +18,7 @@ public class LeaveBalanceService {
     private LeaveBalanceDAO balanceDAO;
 
     public LeaveBalanceService() {
-        this.balanceDAO = new LeaveBalanceDAO();
+        this.balanceDAO = new LeaveBalanceDAOImpl();
     }
 
     // -------- VIEW MY LEAVE BALANCE --------

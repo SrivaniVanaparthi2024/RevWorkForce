@@ -12,9 +12,6 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-/**
- * Unit test for LeaveService
- */
 public class LeaveServiceTest {
 
     private LeaveService leaveService;
@@ -92,12 +89,9 @@ public class LeaveServiceTest {
             throws DatabaseException, InvalidInputException {
 
         leaveService.viewMyLeaves(0);
-    }
+    } 
 
-    // ---------- VIEW PENDING LEAVES ----------
-  
-
-    // ---------- APPROVE LEAVE ----------
+    // ---------- VIEW PENDING LEAVES and APPROVE LEAVE ----------
     @Test
     public void testApproveLeave()
             throws DatabaseException, InvalidInputException {

@@ -1,6 +1,7 @@
 package com.revworkforce.service;
 
 import com.revworkforce.dao.PayrollDAO;
+import com.revworkforce.dao.impl.PayrollDAOImpl;
 import com.revworkforce.model.Payroll;
 import com.revworkforce.auth.Session;
 import java.util.List;
@@ -13,7 +14,7 @@ public class PayrollService {
 
     private static final Logger logger = LoggerFactory.getLogger(PayrollService.class);
 
-    private PayrollDAO payrollDAO = new PayrollDAO();
+    private PayrollDAO payrollDAO = new PayrollDAOImpl();
     private Scanner sc = new Scanner(System.in);
 
     public void managePayroll() {

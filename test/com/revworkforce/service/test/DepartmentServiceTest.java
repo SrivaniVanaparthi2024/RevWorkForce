@@ -1,6 +1,6 @@
 package com.revworkforce.service.test;
 
-import com.revworkforce.dao.DepartmentDAO;
+import com.revworkforce.dao.impl.DepartmentDAOImpl;
 import com.revworkforce.model.Department;
 import com.revworkforce.service.DepartmentService;
 
@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class DepartmentServiceTest {
 
     @Mock
-    private DepartmentDAO deptDAO; // Mocked DAO
+    private DepartmentDAOImpl deptDAO; // Mocked DAO
 
     @InjectMocks
     private DepartmentService deptService; // Service with DAO injected
@@ -47,6 +47,7 @@ public class DepartmentServiceTest {
         assertTrue("Department should be added successfully", result);
     }
 
+   
     @Test
     public void testUpdateDepartment() {
         when(deptDAO.updateDepartment(dept1)).thenReturn(true);
@@ -92,5 +93,29 @@ public class DepartmentServiceTest {
         assertEquals(2, fetchedList.size());
         assertEquals("HR", fetchedList.get(0).getDeptName());
         assertEquals("Finance", fetchedList.get(1).getDeptName());
+    }
+    
+    @Test
+    public void testAddDepartment_Failure() {
+
+        // Negative scenario: DAO fails to add department
+        when(deptDAO.addDepartment(dept1)).thenReturn(false);
+
+        boolean result = deptDAO.addDepartment(dept1);
+
+        verify(deptDAO).addDepartment(dept1);
+        assertFalse("Department should not be added", result);
+    }
+    
+    @Test
+    public void testGetDepartmentById_InvalidId() {
+
+        // Negative scenario: department not found
+        when(deptDAO.getDepartmentById(99)).thenReturn(null);
+
+        Department fetched = deptDAO.getDepartmentById(99);
+
+        verify(deptDAO).getDepartmentById(99);
+        assertNull("Department should be null for invalid ID", fetched);
     }
 }

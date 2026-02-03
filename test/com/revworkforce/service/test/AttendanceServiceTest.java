@@ -1,6 +1,6 @@
 package com.revworkforce.service.test;
 
-import com.revworkforce.dao.AttendanceDAO;
+import com.revworkforce.dao.impl.AttendanceDAOImpl;
 import com.revworkforce.model.Attendance;
 import com.revworkforce.service.AttendanceService;
 
@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class AttendanceServiceTest {
 
     @Mock
-    private AttendanceDAO attendanceDAO;
+    private AttendanceDAOImpl attendanceDAO;
 
     @InjectMocks
     private AttendanceService attendanceService;
@@ -72,5 +72,32 @@ public class AttendanceServiceTest {
         assertEquals(101, a.getEmpId());
         assertEquals("PRESENT", a.getStatus());
         assertEquals(Date.valueOf("2026-01-01"), a.getDate());
+    }
+    
+   
+    @Test
+    public void testViewAttendanceForEmployee_InvalidEmpId() {
+
+        // Negative input: invalid employee id
+        when(attendanceDAO.getAttendanceByEmpId(0))
+                .thenReturn(Arrays.<Attendance>asList());
+
+        attendanceService.viewAttendanceForEmployee(0);
+ 
+        verify(attendanceDAO, times(1))
+                .getAttendanceByEmpId(0);
+    }
+    
+    @Test
+    public void testViewAttendanceForEmployee_EmptyList() {
+
+        // Negative scenario: no data in DB
+        when(attendanceDAO.getAttendanceByEmpId(101))
+                .thenReturn(Arrays.<Attendance>asList());
+
+        attendanceService.viewAttendanceForEmployee(101);
+
+        verify(attendanceDAO, times(1))
+                .getAttendanceByEmpId(101);
     }
 }
